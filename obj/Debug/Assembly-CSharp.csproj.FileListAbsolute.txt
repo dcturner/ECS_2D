@@ -1,0 +1,2 @@
+/Users/dcturner/Documents/KerShoot/git/Unity/2D_ECS/obj/Debug/Assembly-CSharp.csprojResolveAssemblyReference.cache
+/Users/dcturner/Documents/KerShoot/git/Unity/2D_ECS/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache
