@@ -14,7 +14,8 @@ public class UI_Core : MonoBehaviour {
         GL.LoadPixelMatrix();
         //Draw_ELLIPSE(36, 0.5f, 0.5f, 0.1f, 0.1f, colours);
         //Draw_ELLIPSE_FILL(36, 0.5f, 0.5f, 0.1f, 0.1f, colours);
-        Draw_ARC_FILL(50, 0.5f, 0.5f, 0.25f, 0.75f, 0.2f, 0.4f, Color.cyan);
+        //Draw_ARC_FILL(50, 0.5f, 0.5f, 0.25f, 0.75f, 0.2f, 0.4f, Color.cyan);
+        Draw_TRIANGLE_FILL(0.5f, 0.5f, -0.25f, Color.cyan);
     }
 
     public static float ScreenX(float _x){
@@ -68,6 +69,24 @@ public class UI_Core : MonoBehaviour {
         GL.End();
     }
 
+    public static void Draw_TRIANGLE(float _x, float _y, float _size, Color _col){
+        GL.Begin(GL.LINE_STRIP);
+        float _SIZE2 = _size * 0.5f;
+        Add_VERT(_x, _y, _col);
+        Add_VERT(_x -_SIZE2, _y-_size, _col);
+        Add_VERT(_x + _SIZE2, _y-_size, _col);
+        Add_VERT(_x, _y, _col);
+        GL.End();
+    }
+    public static void Draw_TRIANGLE_FILL(float _x, float _y, float _size, Color _col)
+    {
+        GL.Begin(GL.TRIANGLES);
+        float _SIZE2 = _size * 0.5f;
+        Add_VERT(_x, _y, _col);
+        Add_VERT(_x - _SIZE2, _y - _size, _col);
+        Add_VERT(_x + _SIZE2, _y - _size, _col);
+        GL.End();
+    }
 
     public static void Draw_RECT(float _x, float _y, float _w, float _h, Color _col){
         
