@@ -15,7 +15,10 @@ public class UI_Core : MonoBehaviour
         Color[] colours = new Color[1] { Color.red };
         GL.LoadPixelMatrix();
 
-        Draw_CHEVRON_FRAME(0.25f, 0.75f, Anim.Sin_Time(3f, 0f, 0.15f, 0.3f), 0.25f, 0.05f, 0.05f, Color.cyan);
+        float _MOUSEX = Input.mousePosition.x / Screen.width;
+        float _MOUSEY = Input.mousePosition.y / Screen.height;
+
+        Draw_AXIS(0.25f, 0.25f, _MOUSEX, _MOUSEY, 0.01f, 0.005f, 40, 10, Color.cyan, Color.red);
     }
 
     public static float ScreenX(float _x)
@@ -25,6 +28,17 @@ public class UI_Core : MonoBehaviour
     public static float ScreenY(float _y)
     {
         return Screen.height * _y;
+    }
+    public static float Angle(Vector2 p_vector2)
+    {
+        if (p_vector2.x < 0)
+        {
+            return 360 - (Mathf.Atan2(p_vector2.x, p_vector2.y) * Mathf.Rad2Deg * -1);
+        }
+        else
+        {
+            return Mathf.Atan2(p_vector2.x, p_vector2.y) * Mathf.Rad2Deg;
+        }
     }
     public static Vector2 PolarCoord(float _theta, float _radius)
     {
@@ -55,7 +69,13 @@ public class UI_Core : MonoBehaviour
         GL.Color(_col);
         GL.Vertex3(ScreenX(_x), ScreenX(_y), Z);
     }
-
+    public static void Draw_LINE(float _startX, float _startY, float _endX, float _endY, Color _col)
+    {
+        GL.Begin(GL.LINES);
+        Add_VERT(_startX, _startY, _col);
+        Add_VERT(_endX, _endY, _col);
+        GL.End();
+    }
     public static void Draw_POLY_LINE(Vector3[] _verts, Color[] _colours)
     {
         GL.Begin(GL.LINE_STRIP);
@@ -337,5 +357,41 @@ public class UI_Core : MonoBehaviour
         // BTM LEFT
         _rot -= 0.25f;
         Draw_CHEVRON(_x, _y - _h, _thickness, _size, _col, _rot);
+    }
+
+    public static void Draw_AXIS(float _x, float _y, float _size, float _width_MAJOR, float _width_MINOR, int _divisions, int _subDiv, Color _col_MAJOR, Color _col_MINOR, float _rotation = 0, bool _includeStem = false, float _stemThickness = 0.01f)
+    {
+        float _DIV = _size / _divisions;
+
+        TransformMatrix(_x, _y, _rotation);
+
+        if (_includeStem)
+        {
+            Draw_RECT_FILL(0, 0, _size, _stemThickness, _col_MAJOR);
+        }
+
+        for (int i = 0; i <= _divisions; i++)
+        {
+            float _DIST = i * _DIV;
+            if (i % _subDiv == 0)
+            {
+                //MAJOR MARK
+                Draw_LINE(0, _DIST, _width_MAJOR, _DIST, _col_MAJOR);
+            }
+            else
+            {
+                //    // MINOR MARK
+                Draw_LINE(0, _DIST, _width_MINOR, _DIST, _col_MINOR);
+            }
+        }
+    }
+    public static void Draw_AXIS(float _startX, float _startY, float _endX, float _endY, float _width_MAJOR, float _width_MINOR, int _divisions, int _subDiv, Color _col_MAJOR, Color _col_MINOR, bool _includeStem = false, float _stemThickness = 0.01f)
+    {
+        Vector2 _VEC_START = new Vector2(_startX, _startY);
+        Vector2 _VEC_END = new Vector2(_endX, _endY);
+        float _SIZE = Vector2.Distance(_VEC_START, _VEC_END);
+        float _ANGLE = Angle(_VEC_END - _VEC_START)/-360;
+
+        Draw_AXIS(_startX, _startY, _SIZE, _width_MAJOR, _width_MINOR, _divisions, _subDiv, _col_MAJOR, _col_MINOR, _ANGLE, _includeStem, _stemThickness);
     }
 }
