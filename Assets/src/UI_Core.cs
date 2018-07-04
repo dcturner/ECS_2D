@@ -18,7 +18,9 @@ public class UI_Core : MonoBehaviour
         float _MOUSEX = Input.mousePosition.x / Screen.width;
         float _MOUSEY = Input.mousePosition.y / Screen.height;
 
-        Draw_AXIS(0.25f, 0.25f, _MOUSEX, _MOUSEY, 0.01f, 0.005f, 40, 10, Color.cyan, Color.red);
+        //Draw_CHEVRON_FRAME(0.2f, 0.2f, 0.6f, 0.6f, 0.01f, 0.1f, Color.cyan);
+        //Draw_GRID_LINE(0.25f, 0.25f, 0.5f, 0.5f, 10, 10, Color.cyan);
+        Draw_GRID_NGON(0.1f, 0.1f, 0.8f, 0.8f, 10, 10, 3, 0.0025f, new Color(1f,0.1f,0.1f,0.5f));
     }
 
     public static float ScreenX(float _x)
@@ -163,6 +165,8 @@ public class UI_Core : MonoBehaviour
     (int _sides, float _x, float _y, float _size, Color _col, float _rotation = 0)
     {
         _sides += 1;
+        GL.PushMatrix();
+
         GL.Begin(GL.LINE_STRIP);
         TransformMatrix(_x, _y, _rotation);
         float _DIV = (Mathf.PI * 2) / _sides;
@@ -176,6 +180,8 @@ public class UI_Core : MonoBehaviour
         }
         Add_VERT_1to1(_START.x, _START.y, _col);
         GL.End();
+
+        GL.PopMatrix();
     }
     public static void Draw_NGON(int _sides, float _x, float _y, float _size, float _thickness, Color _col, float _rotation = 0)
     {
@@ -297,6 +303,7 @@ public class UI_Core : MonoBehaviour
 
     public static void Draw_CROSS(float _x, float _y, float _thickness, float _size, Color _col, float _rotation = 0)
     {
+        GL.PushMatrix();
         _size *= 0.5f;
         _thickness *= 0.5f;
 
@@ -315,9 +322,11 @@ public class UI_Core : MonoBehaviour
         Add_VERT_1to1(-_thickness, _size, _col);
 
         GL.End();
+        GL.PopMatrix();
     }
     public static void Draw_CHEVRON(float _x, float _y, float _thickness, float _size, Color _col, float _rotation = 0)
     {
+        GL.PushMatrix();
         _size *= 0.5f;
         _thickness *= 0.5f;
 
@@ -337,30 +346,34 @@ public class UI_Core : MonoBehaviour
         Add_VERT_1to1(0f, _thickness, _col);
 
         GL.End();
+        GL.PopMatrix();
     }
 
     public static void Draw_CHEVRON_FRAME(float _x, float _y, float _w, float _h, float _thickness, float _size, Color _col)
     {
-        float _rot = -0.375f;
+        GL.PushMatrix();
+        float _rot = -0.125f;
 
         // TOP LEFT
         Draw_CHEVRON(_x, _y, _thickness, _size, _col, _rot);
 
         // TOP RIGHT
-        _rot -= 0.25f;
+        _rot += 0.25f;
         Draw_CHEVRON(_x + _w, _y, _thickness, _size, _col, _rot);
 
         // BTM RIGHT
-        _rot -= 0.25f;
-        Draw_CHEVRON(_x + _w, _y - _h, _thickness, _size, _col, _rot);
+        _rot += 0.25f;
+        Draw_CHEVRON(_x + _w, _y + _h, _thickness, _size, _col, _rot);
 
         // BTM LEFT
-        _rot -= 0.25f;
-        Draw_CHEVRON(_x, _y - _h, _thickness, _size, _col, _rot);
+        _rot += 0.25f;
+        Draw_CHEVRON(_x, _y + _h, _thickness, _size, _col, _rot);
+        GL.PopMatrix();
     }
 
     public static void Draw_AXIS(float _x, float _y, float _size, float _width_MAJOR, float _width_MINOR, int _divisions, int _subDiv, Color _col_MAJOR, Color _col_MINOR, float _rotation = 0, bool _includeStem = false, float _stemThickness = 0.01f)
     {
+        GL.PushMatrix();
         float _DIV = _size / _divisions;
 
         TransformMatrix(_x, _y, _rotation);
@@ -384,14 +397,56 @@ public class UI_Core : MonoBehaviour
                 Draw_LINE(0, _DIST, _width_MINOR, _DIST, _col_MINOR);
             }
         }
+        GL.PopMatrix();
     }
     public static void Draw_AXIS(float _startX, float _startY, float _endX, float _endY, float _width_MAJOR, float _width_MINOR, int _divisions, int _subDiv, Color _col_MAJOR, Color _col_MINOR, bool _includeStem = false, float _stemThickness = 0.01f)
     {
         Vector2 _VEC_START = new Vector2(_startX, _startY);
         Vector2 _VEC_END = new Vector2(_endX, _endY);
         float _SIZE = Vector2.Distance(_VEC_START, _VEC_END);
-        float _ANGLE = Angle(_VEC_END - _VEC_START)/-360;
+        float _ANGLE = Angle(_VEC_END - _VEC_START) / -360;
 
         Draw_AXIS(_startX, _startY, _SIZE, _width_MAJOR, _width_MINOR, _divisions, _subDiv, _col_MAJOR, _col_MINOR, _ANGLE, _includeStem, _stemThickness);
+    }
+
+    public static void Draw_GRID_LINE(float _x, float _y, float _w, float _h, int _divsX, int _divsY, Color _col)
+    {
+        float _DIV_X = _w / _divsX;
+        float _DIV_Y = _h / _divsY;
+
+        float _LEFT = _x;
+        float _RIGHT = _x + _w;
+        float _BTM = _y;
+        float _TOP = _y + _h;
+
+
+        for (int x = 0; x <= _divsX; x++)
+        {
+            GL.Begin(GL.LINES);
+            Add_VERT(_LEFT + (x * _DIV_X), _BTM, _col);
+            Add_VERT(_LEFT + (x * _DIV_X), _TOP, _col);
+            GL.End();
+            for (int y = 0; y <= _divsY; y++)
+            {
+                GL.Begin(GL.LINES);
+                Add_VERT(_LEFT, _BTM + (y * _DIV_Y), _col);
+                Add_VERT(_RIGHT, _BTM + (y * _DIV_Y), _col);
+                GL.End();
+            }
+        }
+    }
+
+    public static void Draw_GRID_NGON(float _x, float _y, float _w, float _h, int _divsX, int _divsY, int _sides, float _ngonSize, Color _col)
+    {
+        float _DIV_X = _w / _divsX;
+        float _DIV_Y = _h / _divsY;
+
+        for (int x = 0; x <= _divsX; x++)
+        {
+            for (int y = 0; y <= _divsY; y++)
+            {
+                Draw_NGON_FILL(_sides, _x + (x*_DIV_X), _y + (y * _DIV_Y), _ngonSize, _col);
+            }
+        }
     }
 }
