@@ -10,6 +10,14 @@ public class UI_Core : MonoBehaviour
     static Material lineMaterial;
     static float Z = 0f;
 
+    private Spring _spr;
+
+    private void Awake()
+    {
+        _spr = new Spring(0f);
+        _spr.SetTarget(0.5f);
+    }
+
     private void OnPostRender()
     {
         Color[] colours = new Color[1] { Color.red };
@@ -20,7 +28,9 @@ public class UI_Core : MonoBehaviour
 
         //Draw_CHEVRON_FRAME(0.2f, 0.2f, 0.6f, 0.6f, 0.01f, 0.1f, Color.cyan);
         //Draw_GRID_LINE(0.25f, 0.25f, 0.5f, 0.5f, 10, 10, Color.cyan);
-        Draw_GRID_NGON(0.1f, 0.1f, 0.8f, 0.8f, 10, 10, 3, 0.0025f, new Color(1f,0.1f,0.1f,0.5f));
+        _spr.Update();
+
+        Draw_CHEVRON(0.5f, _spr.current, 0.01f, 0.1f, Color.red);
     }
 
     public static float ScreenX(float _x)
