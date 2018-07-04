@@ -14,6 +14,8 @@ public class UI_Core : MonoBehaviour
     {
         Color[] colours = new Color[1] { Color.red };
         GL.LoadPixelMatrix();
+
+        Draw_CHEVRON_FRAME(0.25f, 0.75f, Anim.Sin_Time(3f, 0f, 0.15f, 0.3f), 0.25f, 0.05f, 0.05f, Color.cyan);
     }
 
     public static float ScreenX(float _x)
@@ -39,7 +41,7 @@ public class UI_Core : MonoBehaviour
 
     public static void TransformMatrix(float _x, float _y, float _rotation = 0, float _scaleX = 1, float _scaleY = 1)
     {
-        Matrix4x4 m = Matrix4x4.TRS(new Vector3(ScreenX(_x), ScreenY(_y), Z), Quaternion.Euler(0, 0, _rotation*360f), new Vector3(_scaleX, _scaleY, 1));
+        Matrix4x4 m = Matrix4x4.TRS(new Vector3(ScreenX(_x), ScreenY(_y), Z), Quaternion.Euler(0, 0, _rotation * 360f), new Vector3(_scaleX, _scaleY, 1));
         GL.MultMatrix(m);
     }
 
@@ -155,12 +157,13 @@ public class UI_Core : MonoBehaviour
         Add_VERT_1to1(_START.x, _START.y, _col);
         GL.End();
     }
-    public static void Draw_NGON(int _sides, float _x, float _y, float _size, float _thickness, Color _col, float _rotation = 0){
-        Draw_ARC_FILL(_sides+1, _x, _y, 0f, 1f, _size, _size + _thickness, _col, _rotation);
+    public static void Draw_NGON(int _sides, float _x, float _y, float _size, float _thickness, Color _col, float _rotation = 0)
+    {
+        Draw_ARC_FILL(_sides + 1, _x, _y, 0f, 1f, _size, _size + _thickness, _col, _rotation);
     }
     public static void Draw_NGON_FILL(int _sides, float _x, float _y, float _size, Color _col, float _rotation = 0)
     {
-        Draw_ARC_FILL(_sides+1, _x, _y, 0f, 1f, 0f, _size, _col, _rotation);
+        Draw_ARC_FILL(_sides + 1, _x, _y, 0f, 1f, 0f, _size, _col, _rotation);
     }
     public static void Draw_ELLIPSE(int _segments, float _x, float _y, float _w, float _h, Color[] _colour)
     {
@@ -274,6 +277,65 @@ public class UI_Core : MonoBehaviour
 
     public static void Draw_CROSS(float _x, float _y, float _thickness, float _size, Color _col, float _rotation = 0)
     {
+        _size *= 0.5f;
+        _thickness *= 0.5f;
 
+        TransformMatrix(_x, _y, _rotation);
+        GL.Begin(GL.QUADS);
+        // X rect
+        Add_VERT_1to1(-_size, -_thickness, _col);
+        Add_VERT_1to1(_size, -_thickness, _col);
+        Add_VERT_1to1(_size, _thickness, _col);
+        Add_VERT_1to1(-_size, _thickness, _col);
+
+        // Y rect
+        Add_VERT_1to1(-_thickness, -_size, _col);
+        Add_VERT_1to1(_thickness, -_size, _col);
+        Add_VERT_1to1(_thickness, _size, _col);
+        Add_VERT_1to1(-_thickness, _size, _col);
+
+        GL.End();
+    }
+    public static void Draw_CHEVRON(float _x, float _y, float _thickness, float _size, Color _col, float _rotation = 0)
+    {
+        _size *= 0.5f;
+        _thickness *= 0.5f;
+
+        TransformMatrix(_x, _y, _rotation);
+        GL.Begin(GL.QUADS);
+
+        // LEFT arm
+        Add_VERT_1to1(0f, 0f, _col);
+        Add_VERT_1to1(-_size, _size, _col);
+        Add_VERT_1to1(-(_size - _thickness * 0.5f), _size + (_thickness * 0.5f), _col);
+        Add_VERT_1to1(0f, _thickness, _col);
+
+        // RIGHT arm
+        Add_VERT_1to1(0f, 0f, _col);
+        Add_VERT_1to1(_size, _size, _col);
+        Add_VERT_1to1((_size - _thickness * 0.5f), _size + (_thickness * 0.5f), _col);
+        Add_VERT_1to1(0f, _thickness, _col);
+
+        GL.End();
+    }
+
+    public static void Draw_CHEVRON_FRAME(float _x, float _y, float _w, float _h, float _thickness, float _size, Color _col)
+    {
+        float _rot = -0.375f;
+
+        // TOP LEFT
+        Draw_CHEVRON(_x, _y, _thickness, _size, _col, _rot);
+
+        // TOP RIGHT
+        _rot -= 0.25f;
+        Draw_CHEVRON(_x + _w, _y, _thickness, _size, _col, _rot);
+
+        // BTM RIGHT
+        _rot -= 0.25f;
+        Draw_CHEVRON(_x + _w, _y - _h, _thickness, _size, _col, _rot);
+
+        // BTM LEFT
+        _rot -= 0.25f;
+        Draw_CHEVRON(_x, _y - _h, _thickness, _size, _col, _rot);
     }
 }

@@ -18,7 +18,7 @@ namespace ANIM
             return (_min + _HALF_RANGE) + Mathf.Cos(Runtime(_rate, _offset)) * _HALF_RANGE;
         }
 
-        public static float Runtime(float _rate, float _offset = 0.0f)
+        public static float Runtime(float _rate = 1f, float _offset = 0.0f)
         {
             return (Time.realtimeSinceStartup + _offset) * _rate;
         }
