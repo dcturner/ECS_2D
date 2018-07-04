@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ANIM;
 
-public class UI_Core : MonoBehaviour {
+public class UI_Core : MonoBehaviour
+{
     static float PI2 = Mathf.PI * 2.0f;
     //static Camera CAM;
     static Material lineMaterial;
@@ -12,23 +14,10 @@ public class UI_Core : MonoBehaviour {
     {
         Color[] colours = new Color[1] { Color.red };
         GL.LoadPixelMatrix();
-        //Draw_ELLIPSE(36, 0.5f, 0.5f, 0.1f, 0.1f, colours);
-        //Draw_ELLIPSE_FILL(36, 0.5f, 0.5f, 0.1f, 0.1f, colours);
-        //Draw_ARC_FILL(50, 0.5f, 0.5f, 0.25f, 0.75f, 0.2f, 0.4f, Color.cyan);
-
-        //Draw_TRIANGLE_FILL(0.5f, 0.5f, 0.1f, Color.cyan, Time.realtimeSinceStartup * 100f);
-        int total = 200;
-        float angleDiv = 1f / total;
-        float thickDiv = 0.8f / total;
-        for (int i = 0; i < total; i++)
-        {
-            Draw_ARC_FILL(12, 0.5f, 0.5f, 0f, angleDiv, i*thickDiv, (i+1)*thickDiv, Color.cyan, Time.realtimeSinceStartup * (Mathf.Sin(i*0.01f) * 100f));
-        }
-        //Draw_ARC_FILL(24, 0.5f, 0.5f, 0f, 0.25f, 0.2f, 0.22f, Color.cyan, Time.realtimeSinceStartup * 100f);
-
     }
 
-    public static float ScreenX(float _x){
+    public static float ScreenX(float _x)
+    {
         return Screen.width * _x;
     }
     public static float ScreenY(float _y)
@@ -48,8 +37,9 @@ public class UI_Core : MonoBehaviour {
         return new Vector2(_X, _Y);
     }
 
-    public static void TransformMatrix(float _x, float _y, float _rotation, float _scaleX = 1, float _scaleY = 1){
-        Matrix4x4 m = Matrix4x4.TRS(new Vector3(ScreenX(_x), ScreenY(_y),Z), Quaternion.Euler(0, 0, _rotation), new Vector3(_scaleX, _scaleY, 1));
+    public static void TransformMatrix(float _x, float _y, float _rotation = 0, float _scaleX = 1, float _scaleY = 1)
+    {
+        Matrix4x4 m = Matrix4x4.TRS(new Vector3(ScreenX(_x), ScreenY(_y), Z), Quaternion.Euler(0, 0, _rotation*360f), new Vector3(_scaleX, _scaleY, 1));
         GL.MultMatrix(m);
     }
 
@@ -64,7 +54,8 @@ public class UI_Core : MonoBehaviour {
         GL.Vertex3(ScreenX(_x), ScreenX(_y), Z);
     }
 
-    public static void Draw_POLY_LINE(Vector3[] _verts, Color[] _colours){
+    public static void Draw_POLY_LINE(Vector3[] _verts, Color[] _colours)
+    {
         GL.Begin(GL.LINE_STRIP);
 
         for (int vertIndex = 0; vertIndex < _verts.Length; vertIndex++)
@@ -94,7 +85,7 @@ public class UI_Core : MonoBehaviour {
         float _SIZE2 = _size * 0.5f;
 
         GL.PushMatrix();
-        TransformMatrix(ScreenX(_x), ScreenY(_y), _rotation);
+        TransformMatrix(_x, _y, _rotation);
         GL.Begin(GL.LINE_STRIP);
 
         Add_VERT(0, 0, _col);
@@ -111,7 +102,7 @@ public class UI_Core : MonoBehaviour {
         float _SIZE2 = _size * 0.5f;
 
         GL.PushMatrix();
-        TransformMatrix(ScreenX(_x), ScreenY(_y), _rotation);
+        TransformMatrix(_x, _y, _rotation);
         GL.Begin(GL.TRIANGLES);
 
         Add_VERT(0, 0, _col);
@@ -122,8 +113,9 @@ public class UI_Core : MonoBehaviour {
         GL.PopMatrix();
     }
 
-    public static void Draw_RECT(float _x, float _y, float _w, float _h, Color _col){
-        
+    public static void Draw_RECT(float _x, float _y, float _w, float _h, Color _col)
+    {
+
         GL.Begin(GL.LINE_STRIP);
 
         Add_VERT(_x, _y, _col);
@@ -145,8 +137,33 @@ public class UI_Core : MonoBehaviour {
 
         GL.End();
     }
+    public static void Draw_NGON_LINE
+    (int _sides, float _x, float _y, float _size, Color _col, float _rotation = 0)
+    {
+        _sides += 1;
+        GL.Begin(GL.LINE_STRIP);
+        TransformMatrix(_x, _y, _rotation);
+        float _DIV = (Mathf.PI * 2) / _sides;
+        Vector2 _START = PolarCoord(0, _size);
 
-    public static void Draw_ELLIPSE(int _segments, float _x, float _y, float _w, float _h, Color[] _colour){
+        Add_VERT_1to1(_START.x, _START.y, _col);
+        for (int i = 1; i < _sides; i++)
+        {
+            Vector2 _POLAR = PolarCoord(i * _DIV, _size);
+            Add_VERT_1to1(_POLAR.x, _POLAR.y, _col);
+        }
+        Add_VERT_1to1(_START.x, _START.y, _col);
+        GL.End();
+    }
+    public static void Draw_NGON(int _sides, float _x, float _y, float _size, float _thickness, Color _col, float _rotation = 0){
+        Draw_ARC_FILL(_sides+1, _x, _y, 0f, 1f, _size, _size + _thickness, _col, _rotation);
+    }
+    public static void Draw_NGON_FILL(int _sides, float _x, float _y, float _size, Color _col, float _rotation = 0)
+    {
+        Draw_ARC_FILL(_sides+1, _x, _y, 0f, 1f, 0f, _size, _col, _rotation);
+    }
+    public static void Draw_ELLIPSE(int _segments, float _x, float _y, float _w, float _h, Color[] _colour)
+    {
 
 
         GL.Begin(GL.LINE_STRIP);
@@ -163,7 +180,8 @@ public class UI_Core : MonoBehaviour {
         GL.End();
     }
 
-    public static void Draw_ELLIPSE_FILL(int _segments, float _x, float _y, float _w, float _h, Color[] _colour){
+    public static void Draw_ELLIPSE_FILL(int _segments, float _x, float _y, float _w, float _h, Color[] _colour)
+    {
 
         float _DIV = (Mathf.PI * 2) / _segments;
 
@@ -171,7 +189,7 @@ public class UI_Core : MonoBehaviour {
         for (int i = 0; i < _segments; i++)
         {
             Vector2 _V1 = PolarCoord2(i * _DIV, _w, _h);
-            Vector2 _V2 = PolarCoord2((i+1) * _DIV, _w, _h);
+            Vector2 _V2 = PolarCoord2((i + 1) * _DIV, _w, _h);
             GL.Begin(GL.TRIANGLES);
             Add_VERT(_V1.x + _x, _V1.y + _y, _colour[i % _colour.Length]);
             Add_VERT(_V2.x + _x, _V2.y + _y, _colour[i % _colour.Length]);
@@ -185,7 +203,7 @@ public class UI_Core : MonoBehaviour {
         float _THETA_START = _start * PI2;
         float _THETA_END = _end * PI2;
         float _THETA_RANGE = _THETA_END - _THETA_START;
-        float _THETA_DIV = _THETA_RANGE / (_segments-1);
+        float _THETA_DIV = _THETA_RANGE / (_segments - 1);
 
         GL.PushMatrix();
         TransformMatrix(_x, _y, _rotation);
@@ -196,7 +214,7 @@ public class UI_Core : MonoBehaviour {
         Add_VERT_1to1(_START_VEC.x, _START_VEC.y, _col);
         for (int i = 1; i < _segments; i++)
         {
-            Vector2 _V = PolarCoord(_THETA_START + (i*_THETA_DIV), _radius_start);
+            Vector2 _V = PolarCoord(_THETA_START + (i * _THETA_DIV), _radius_start);
             Add_VERT_1to1(_V.x, _V.y, _col);
         }
         // TOP arc
@@ -218,9 +236,9 @@ public class UI_Core : MonoBehaviour {
         float _THETA_START = _start * PI2;
         float _THETA_END = _end * PI2;
         float _THETA_RANGE = _THETA_END - _THETA_START;
-        float _THETA_DIV = _THETA_RANGE / (_segments-1);
+        float _THETA_DIV = _THETA_RANGE / (_segments - 1);
 
-        int _TOTAL_SEGMENTS = (_segments * 2)-1;
+        int _TOTAL_SEGMENTS = (_segments * 2) - 1;
 
         Vector2[] _VECS = new Vector2[_TOTAL_SEGMENTS + 1];
 
@@ -231,7 +249,7 @@ public class UI_Core : MonoBehaviour {
             Vector2 _TOP = PolarCoord(_THETA_END - (i * _THETA_DIV), _radius_end);
 
             _VECS[i] = _BTM;
-            _VECS[i +_segments] = _TOP;
+            _VECS[i + _segments] = _TOP;
 
 
         }
@@ -241,9 +259,9 @@ public class UI_Core : MonoBehaviour {
         {
             Vector2 _VA, _VB, _VC;
 
-                _VA = _VECS[_TOTAL_SEGMENTS - i];
-                _VB = _VECS[i];
-                _VC = _VECS[i + 1];
+            _VA = _VECS[_TOTAL_SEGMENTS - i];
+            _VB = _VECS[i];
+            _VC = _VECS[i + 1];
 
             GL.Begin(GL.TRIANGLES);
             Add_VERT_1to1(_VA.x, _VA.y, _col);
@@ -254,7 +272,8 @@ public class UI_Core : MonoBehaviour {
         GL.PopMatrix();
     }
 
-    public static void Draw_CROSS(float _x, float _y, float _thickness, float _size, Color _col, float _rotation = 0){
-        
+    public static void Draw_CROSS(float _x, float _y, float _thickness, float _size, Color _col, float _rotation = 0)
+    {
+
     }
 }
