@@ -60,6 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\src\Anim.cs" />
+    <Compile Include="Assets\src\GL_DRAW.cs" />
+    <Compile Include="Assets\src\GL_TXT.cs" />
     <Compile Include="Assets\src\Spring.cs" />
     <Compile Include="Assets\src\UI_Core.cs" />
     <Reference Include="UnityEditor.StandardEvents">
