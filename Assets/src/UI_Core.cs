@@ -12,6 +12,8 @@ public class UI_Core : MonoBehaviour
         float _MX = Input.mousePosition.x / Screen.width;
         float _MY = Input.mousePosition.y / Screen.height;
         GL.LoadPixelMatrix();
-        GL_TXT.Draw_TXT(Mathf.FloorToInt(Anim.Sin_Time(3f, 0,99)).ToString("##"), _MX + 0.1f, _MY, Anim.Sin_Time(10 * _MX,0.001f, 0.01f), Color.cyan);
+        //GL_TXT.Txt(Anim.Runtime().ToString(), 0.5f, 0.5f, 0.01f, Color.cyan);
+        GL_TXT.Txt_NGON(Anim.Runtime().ToString(), 0.5f, 0.5f, 0.01f, Anim.Sin_Time(_min: 0.25f, _max: 0.75f), 3, Color.cyan);
+        //GL_DRAW.Draw_NGON_FILL(3, _MX + 0.01f, _MY, 0.2f, Color.red);
     }
 }

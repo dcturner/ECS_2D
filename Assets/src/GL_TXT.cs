@@ -10,12 +10,26 @@ public class GL_TXT
         BitArray _CELLS = GL_FONT_3x5.Get(_char);
         GL_DRAW.Draw_MATRIX_RECT(_x, _y, _size * 3, -GL_DRAW.LockAspect_Y(_size * 5), 3, 5, _col, _CELLS);
     }
+    public static void Draw_Glyph_NGON(char _char, float _x, float _y, float _size, float _ngonScaleFactor, int _sides, Color _col)
+    {
+        BitArray _CELLS = GL_FONT_3x5.Get(_char);
+        GL_DRAW.Draw_MATRIX_NGON(_x, _y, _size * 3, -_size * 5, _sides, _ngonScaleFactor, 3, 5, _col, _CELLS);
+    }
 
-    public static void Draw_TXT(string _str, float _x, float _y, float _cellSize, Color _col){
+    public static void Txt(string _str, float _x, float _y, float _cellSize, Color _col)
+    {
         float _CHAR_WIDTH = _cellSize * 3;
         for (int i = 0; i < _str.Length; i++)
         {
-            Draw_Glyph(_str[i], _x + (_CHAR_WIDTH * i) + (_cellSize * i), _y,_cellSize, _col);
+            Draw_Glyph(_str[i], _x + (_CHAR_WIDTH * i) + (_cellSize * i), _y, _cellSize, _col);
+        }
+    }
+    public static void Txt_NGON(string _str, float _x, float _y, float _cellSize, float _ngonScaleFactor, int _sides, Color _col)
+    {
+        float _CHAR_WIDTH = _cellSize * 3;
+        for (int i = 0; i < _str.Length; i++)
+        {
+            Draw_Glyph_NGON(_str[i], _x + (_CHAR_WIDTH * i) + (_cellSize * i), _y, _cellSize, _ngonScaleFactor, _sides, _col);
         }
     }
 }
@@ -26,6 +40,8 @@ public class GL_FONT_3x5
     public static Dictionary<char, BitArray> glpyhs = new Dictionary<char, BitArray>();
     public static void Init()
     {
+
+        // DIGITS
         glpyhs.Add('0', Set(new int[] { 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1 }));
         glpyhs.Add('1', Set(new int[] { 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 }));
         glpyhs.Add('2', Set(new int[] { 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1 }));
@@ -37,6 +53,7 @@ public class GL_FONT_3x5
         glpyhs.Add('8', Set(new int[] { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 }));
         glpyhs.Add('9', Set(new int[] { 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1 }));
 
+        // ALPHA
         glpyhs.Add('a', Set(new int[] { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1 }));
         glpyhs.Add('b', Set(new int[] { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1 }));
         glpyhs.Add('c', Set(new int[] { 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1 }));
@@ -63,6 +80,21 @@ public class GL_FONT_3x5
         glpyhs.Add('x', Set(new int[] { 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1 }));
         glpyhs.Add('y', Set(new int[] { 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1 }));
         glpyhs.Add('z', Set(new int[] { 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1 }));
+
+        // PUNCTUATION
+        glpyhs.Add(' ', Set(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
+        glpyhs.Add('_', Set(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }));
+        glpyhs.Add('-', Set(new int[] { 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }));
+        glpyhs.Add('.', Set(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 }));
+        glpyhs.Add('<', Set(new int[] { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1 }));
+        glpyhs.Add('>', Set(new int[] { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0 }));
+        glpyhs.Add('!', Set(new int[] { 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0 }));
+        glpyhs.Add('/', Set(new int[] { 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0 }));
+        glpyhs.Add('\\', Set(new int[] { 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 }));
+        glpyhs.Add(':', Set(new int[] { 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 }));
+        glpyhs.Add('+', Set(new int[] { 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0 }));
+        glpyhs.Add('=', Set(new int[] { 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0 }));
+        glpyhs.Add('"', Set(new int[] { 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
     }
     private static BitArray Set(int[] _cells)
     {

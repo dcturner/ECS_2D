@@ -45,8 +45,11 @@ public class GL_DRAW
 
     public static void TransformMatrix(float _x, float _y, float _rotation = 0, float _scaleX = 1, float _scaleY = 1)
     {
+        Matrix4x4 model = GL.modelview;
         Matrix4x4 m = Matrix4x4.TRS(new Vector3(ScreenX(_x), ScreenY(_y), Z), Quaternion.Euler(0, 0, _rotation * 360f), new Vector3(_scaleX, _scaleY, 1));
-        GL.MultMatrix(m);
+
+        GL.MultMatrix(m*model);
+
     }
 
     public static void Add_VERT(float _x, float _y, Color _col)
@@ -455,6 +458,30 @@ public class GL_DRAW
                     _DIV_X,
                     _DIV_Y, _col
                 );
+            }
+        }
+
+        GL.PopMatrix();
+    }
+    public static void Draw_MATRIX_NGON(float _x, float _y, float _w, float _h, int _sides, float _ngonScaleFactor, int _cellsX, int _cellsY, Color _col, BitArray _cells, float _rotation = 0)
+    {
+        GL.PushMatrix();
+        TransformMatrix(_x, _y, _rotation);
+
+        float _DIV_X = _w / _cellsX;
+        float _DIV_Y = _h / _cellsY;
+        float _NGON_SIZE = _DIV_X * _ngonScaleFactor;
+
+        for (int i = 0; i < _cells.Length; i++)
+        {
+            if (_cells.Get(i))
+            {
+                Draw_NGON_FILL(
+                    _sides,
+                    (i % _cellsX) * _DIV_X,
+                    Mathf.FloorToInt(i / _cellsX) * _DIV_Y,
+                    _NGON_SIZE,
+                    _col);
             }
         }
 
