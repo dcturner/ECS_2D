@@ -5,18 +5,33 @@ using UnityEngine;
 public class HUD
 {
     public const float DEFAULT_GUTTER_RATIO = 0.95f;
+    public static Color DEFAULT_LINE_COLOUR = Color.white;
 
     #region DATA
     public struct Histogram
     {
+        public int binCount;
         public float[] values;
-        public Histogram(float[] _values)
+        public Color colour;
+        public Histogram(int _binCount)
         {
-            values = _values;
+            binCount = _binCount;
+            values = new float[_binCount];
+            colour = DEFAULT_LINE_COLOUR;
         }
         public float GetValue(int _index)
         {
             return values[_index];
+        }
+        public void Set_Value(int _binIndex, float _newValue){
+            values[_binIndex] = _newValue;
+        }
+        public void UpdateNoise(float _rateA, float _offsetA, float _rateB, float _offsetB)
+        {
+            for (int i = 0; i < binCount; i++)
+            {
+                Set_Value(i, Anim.PNoise(_rateA, _offsetA, _rateB, _offsetB));
+            }
         }
     }
     public struct Graph
@@ -47,11 +62,11 @@ public class HUD
         {
             return values[_index];
         }
-        public void UpdateRandom(float _rate, float _offset)
+        public void UpdateNoise(float _rateA, float _offsetA, float _rateB, float _offsetB)
         {
             for (int i = 0; i < binCount; i++)
             {
-                Set_Value(i, Mathf.PerlinNoise(Anim.Runtime(_rate, 0), Anim.Runtime(1f, _offset * i)));
+                Set_Value(i, Anim.PNoise(_rateA, _offsetA, _rateB, _offsetB));
             }
         }
     }
@@ -119,6 +134,13 @@ public class HUD
                 new Color(_COL.r, _COL.g, _COL.b, _graph.Get_Value(i))
             );
         }
+    }
+
+    public static void Draw_LABEL(string _str, float _x, float _y, float _w, float _h, float _txt_height, float _txt_x, float _txt_y, Color _col_PANEL, Color _col_TXT){
+        GL_DRAW.Draw_RECT_FILL(_x, _y, _w, _h, _col_PANEL);
+        GL_DRAW.Draw_RECT_FILL(_x + _w + (_h * 0.05f), _y, (_h * 0.05f), _h, _col_PANEL);
+        GL_TXT.Txt(_str, _x + (_w * _txt_x), _y + (_h * _txt_y), _txt_height / 5, _col_TXT);
+
     }
     #endregion
 }

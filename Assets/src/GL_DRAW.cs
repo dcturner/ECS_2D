@@ -16,7 +16,8 @@ public class GL_DRAW
     {
         return Screen.height * _y;
     }
-    public static float LockAspect_Y(float _y){
+    public static float LockAspect_Y(float _y)
+    {
         return _y * ((float)Screen.width / Screen.height);
     }
     public static float Angle(Vector2 p_vector2)
@@ -48,7 +49,7 @@ public class GL_DRAW
         Matrix4x4 model = GL.modelview;
         Matrix4x4 m = Matrix4x4.TRS(new Vector3(ScreenX(_x), ScreenY(_y), Z), Quaternion.Euler(0, 0, _rotation * 360f), new Vector3(_scaleX, _scaleY, 1));
 
-        GL.MultMatrix(m*model);
+        GL.MultMatrix(m * model);
 
     }
 
@@ -362,7 +363,7 @@ public class GL_DRAW
         GL.PopMatrix();
     }
 
-    public static void Draw_AXIS(float _x, float _y, float _size, float _width_MAJOR, float _width_MINOR, int _divisions, int _subDiv, Color _col_MAJOR, Color _col_MINOR, float _rotation = 0, bool _includeStem = false, float _stemThickness = 0.01f)
+    public static void Draw_AXIS(float _x, float _y, float _size, float _width_MAJOR, float _width_MINOR, int _divisions, int _subDiv, Color _col_MAJOR, Color _col_MINOR, float _rotation = 0, float _offset = 0, bool _includeStem = false, float _stemThickness = 0.01f)
     {
         GL.PushMatrix();
         float _DIV = _size / _divisions;
@@ -374,9 +375,13 @@ public class GL_DRAW
             Draw_RECT_FILL(0, 0, _size, _stemThickness, _col_MAJOR);
         }
 
-        for (int i = 0; i <= _divisions; i++)
+        // draw bookends first
+        Draw_LINE(_x, _y, _x + _width_MAJOR, _y, _col_MAJOR);
+        Draw_LINE(_x, _y+_size, _x + _width_MAJOR, _y+_size, _col_MAJOR);
+
+        for (int i = 0; i < _divisions; i++)
         {
-            float _DIST = i * _DIV;
+            float _DIST = Mathf.Clamp((i * _DIV + _offset)%_size, _y, _y+_size);
             if (i % _subDiv == 0)
             {
                 //MAJOR MARK
@@ -390,17 +395,17 @@ public class GL_DRAW
         }
         GL.PopMatrix();
     }
-    public static void Draw_AXIS(float _startX, float _startY, float _endX, float _endY, float _width_MAJOR, float _width_MINOR, int _divisions, int _subDiv, Color _col_MAJOR, Color _col_MINOR, bool _includeStem = false, float _stemThickness = 0.01f)
+    public static void Draw_AXIS(float _startX, float _startY, float _endX, float _endY, float _width_MAJOR, float _width_MINOR, int _divisions, int _subDiv, Color _col_MAJOR, Color _col_MINOR, float _offset = 0, bool _includeStem = false, float _stemThickness = 0.01f)
     {
         Vector2 _VEC_START = new Vector2(_startX, _startY);
         Vector2 _VEC_END = new Vector2(_endX, _endY);
         float _SIZE = Vector2.Distance(_VEC_START, _VEC_END);
         float _ANGLE = Angle(_VEC_END - _VEC_START) / -360;
 
-        Draw_AXIS(_startX, _startY, _SIZE, _width_MAJOR, _width_MINOR, _divisions, _subDiv, _col_MAJOR, _col_MINOR, _ANGLE, _includeStem, _stemThickness);
+        Draw_AXIS(_startX, _startY, _SIZE, _width_MAJOR, _width_MINOR, _divisions, _subDiv, _col_MAJOR, _col_MINOR, _ANGLE, _offset, _includeStem, _stemThickness);
     }
 
-    public static void Draw_GRID_LINE(float _x, float _y, float _w, float _h, int _divsX, int _divsY, Color _col)
+    public static void Draw_GRID_LINE(float _x, float _y, float _w, float _h, int _divsX, int _divsY, Color _col, float _offset_x = 0f, float _offset_y = 0f)
     {
         float _DIV_X = _w / _divsX;
         float _DIV_Y = _h / _divsY;
@@ -410,18 +415,23 @@ public class GL_DRAW
         float _BTM = _y;
         float _TOP = _y + _h;
 
+        float _OFFSET_X = (_offset_x * _w) % _DIV_X;
+        float _OFFSET_Y = (_offset_y * _h) % _DIV_Y;
 
-        for (int x = 0; x <= _divsX; x++)
+        // draw frame first
+        Draw_RECT(_x, _y, _w, _h, _col);
+
+        for (int x = 0; x < _divsX; x++)
         {
             GL.Begin(GL.LINES);
-            Add_VERT(_LEFT + (x * _DIV_X), _BTM, _col);
-            Add_VERT(_LEFT + (x * _DIV_X), _TOP, _col);
+            Add_VERT(Mathf.Clamp01(_LEFT + (x * _DIV_X) + _OFFSET_X), _BTM, _col);
+            Add_VERT(Mathf.Clamp01(_LEFT + (x * _DIV_X) + _OFFSET_X), _TOP, _col);
             GL.End();
-            for (int y = 0; y <= _divsY; y++)
+            for (int y = 0; y < _divsY; y++)
             {
                 GL.Begin(GL.LINES);
-                Add_VERT(_LEFT, _BTM + (y * _DIV_Y), _col);
-                Add_VERT(_RIGHT, _BTM + (y * _DIV_Y), _col);
+                Add_VERT(_LEFT, Mathf.Clamp01(_BTM + (y * _DIV_Y) + _OFFSET_Y), _col);
+                Add_VERT(_RIGHT, Mathf.Clamp01(_BTM + (y * _DIV_Y) + _OFFSET_Y), _col);
                 GL.End();
             }
         }
@@ -441,7 +451,8 @@ public class GL_DRAW
         }
     }
 
-    public static void Draw_MATRIX_RECT(float _x, float _y, float _w, float _h, int _cellsX, int _cellsY, Color _col, BitArray _cells, float _rotation = 0){
+    public static void Draw_MATRIX_RECT(float _x, float _y, float _w, float _h, int _cellsX, int _cellsY, Color _col, BitArray _cells, float _rotation = 0)
+    {
         GL.PushMatrix();
         TransformMatrix(_x, _y, _rotation);
 
