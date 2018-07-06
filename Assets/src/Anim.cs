@@ -21,12 +21,84 @@ public static class Anim
     {
         return (Time.realtimeSinceStartup + _offset) * _rate;
     }
+    public static int Runtime_int(float _rate = 1f, float _offset = 0)
+    {
+        return Mathf.FloorToInt((Time.realtimeSinceStartup + _offset) * _rate);
+    }
 
     public static float PNoise(float _rateA = 1, float _rateB = 1, float _offsetA = 0, float _offsetB = 0)
     {
         return Mathf.PerlinNoise(Anim.Runtime(_rateA, _offsetA), Anim.Runtime(_rateB, _offsetB));
     }
-    public static Color ColourOscillator(Color _A, Color _B, float _rate = 1, float _offset = 0){
+    public static Color Colour_OSCILLATOR(Color _A, Color _B, float _rate = 1, float _offset = 0){
         return Color.Lerp(_A, _B, Sin_Time(_rate: _rate, _timeOffset: +_offset));
+    }
+    public static Color Colour_SWITCH(Color _A, Color _B,float _ratio = 0.5f, float _rate = 1, float _offset = 0 ){
+        return Color.Lerp(_A, _B, ((Anim.Runtime(_rate, _offset) % 1) > _ratio) ? 0 : 1);
+    }
+}
+public class GL_MATRIX_ANIM
+{
+    public string name;
+    public int totalFrames = 0;
+    public int cellsX, cellsY;
+    public List<BitArray> frames;
+    public GL_MATRIX_ANIM(string _name, int _cellsX = 3, int _cellsY = 3)
+    {
+        name = _name;
+        cellsX = _cellsX;
+        cellsY = _cellsY;
+        frames = new List<BitArray>();
+    }
+    public void AddFrame(params int[] _cells)
+    {
+        BitArray result = new BitArray(_cells.Length);
+        for (int i = 0; i < _cells.Length; i++)
+        {
+            result[i] = (_cells[i] == 1) ? true : false;
+        }
+        frames.Add(result);
+        totalFrames = frames.Count;
+    }
+    public BitArray Get(int _frame)
+    {
+        return frames[_frame];
+    }
+}
+public class GL_MATRIX_ANIMS
+{
+    public static string NAME_SPINNER_3X3 = "SPINNER_3X3";
+    public static string NAME_INC_3X3 = "INC_3X3";
+
+    public static Dictionary<string, GL_MATRIX_ANIM> animations = new Dictionary<string, GL_MATRIX_ANIM>();
+    public static void Init()
+    {
+        GL_MATRIX_ANIM _ANIM_SPINNER = new GL_MATRIX_ANIM(NAME_SPINNER_3X3);
+        _ANIM_SPINNER.AddFrame(1, 0, 0, 0, 1, 0, 0, 0, 1);
+        _ANIM_SPINNER.AddFrame(0, 1, 0, 0, 1, 0, 0, 1, 0);
+        _ANIM_SPINNER.AddFrame(0, 0, 1, 0, 1, 0, 1, 0, 0);
+        _ANIM_SPINNER.AddFrame(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        animations.Add(_ANIM_SPINNER.name, _ANIM_SPINNER);
+
+        GL_MATRIX_ANIM _ANIM_INC = new GL_MATRIX_ANIM(NAME_INC_3X3);
+        _ANIM_INC.AddFrame(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        _ANIM_INC.AddFrame(0, 1, 0, 0, 0, 0, 0, 0, 0);
+        _ANIM_INC.AddFrame(0, 0, 1, 0, 0, 0, 0, 0, 0);
+        _ANIM_INC.AddFrame(0, 0, 0, 1, 0, 0, 0, 0, 0);
+        _ANIM_INC.AddFrame(0, 0, 0, 0, 1, 0, 0, 0, 0);
+        _ANIM_INC.AddFrame(0, 0, 0, 0, 0, 1, 0, 0, 0);
+        _ANIM_INC.AddFrame(0, 0, 0, 0, 0, 0, 1, 0, 0);
+        _ANIM_INC.AddFrame(0, 0, 0, 0, 0, 0, 0, 1, 0);
+        _ANIM_INC.AddFrame(0, 0, 0, 0, 0, 0, 0, 0, 1);
+        animations.Add(_ANIM_INC.name, _ANIM_INC);
+    }
+    public static void Draw(string _animName, int _frame, float _x, float _y, float _w, Color _col)
+    {
+        GL_MATRIX_ANIM _ANIM = animations[_animName];
+        Draw_MATRIX_ANIM_FRAME(_ANIM.frames, _frame, _ANIM.cellsX, _ANIM.cellsY, _ANIM.totalFrames, _x, _y, _w, _col);
+    }
+    public static void Draw_MATRIX_ANIM_FRAME(List<BitArray> _frames, int _frame, int _cellsX, int _cellsY, int _totalFrames, float _x, float _y, float _w, Color _col)
+    {
+        GL_DRAW.Draw_MATRIX_RECT(_x, _y, _w, GL_DRAW.LockAspect_Y(_w), _cellsX, _cellsY, _col, _frames[_frame % _totalFrames]);
     }
 }

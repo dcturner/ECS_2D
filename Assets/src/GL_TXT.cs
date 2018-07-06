@@ -10,6 +10,12 @@ public class GL_TXT
         BitArray _CELLS = GL_FONT_3x5.Get(_char);
         GL_DRAW.Draw_MATRIX_RECT(_x, _y, _size * 3, -GL_DRAW.LockAspect_Y(_size * 5), 3, 5, _col, _CELLS);
     }
+    public static void Draw_MATRIX_ANIM_FRAME(List<BitArray> _frames, int _frame, int _cellsX, int _cellsY, int _totalFrames, float _x, float _y, float _w, Color _col)
+    {
+        GL_DRAW.Draw_MATRIX_RECT(_x, _y, _w, GL_DRAW.LockAspect_Y(_w), _cellsX, _cellsY, _col, _frames[_frame % _totalFrames]);
+    }
+
+
     public static void Draw_Glyph_NGON(char _char, float _x, float _y, float _size, float _ngonScaleFactor, int _sides, Color _col)
     {
         BitArray _CELLS = GL_FONT_3x5.Get(_char);
@@ -110,3 +116,4 @@ public class GL_FONT_3x5
         return glpyhs[_char];
     }
 }
+
