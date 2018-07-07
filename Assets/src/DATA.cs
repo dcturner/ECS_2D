@@ -105,33 +105,47 @@ namespace DATA
     {
 
         List<BitArray> rows;
-        int rowLength, totalRows, currentRow, currentCell;
-        float timer, minDuration, maxDuration, cellsPerSecond;
-        public DataSprawl(int _totalRows, int _rowLength, float _minDuration = 0.1f, float _maxDuration = 1f, float _cellsPerSecond = 0.1f)
+        int rowLength, totalRows, totalCells, currentRow, currentCell, timer_writeCell, currentFrame, minDuration, maxDuration, framesPerTick, cellRate;
+        float durationFactor_MIN, durationFactor_MAX;
+        public DataSprawl(int _totalRows, int _rowLength,int _framesPerTick = 2, int _cellRate = 1, float _durationFactor_MIN = 1f, float _durationFactor_MAX = 3f)
         {
             totalRows = _totalRows;
             rowLength = _rowLength;
+            totalCells = totalRows * rowLength;
             rows = new List<BitArray>(totalRows);
 
-            minDuration = _minDuration;
-            maxDuration = _maxDuration;
-            cellsPerSecond = _cellsPerSecond;
-            timer = 0;
+            durationFactor_MIN = _durationFactor_MIN;
+            durationFactor_MAX = _durationFactor_MAX;
+            framesPerTick = _framesPerTick;
+            minDuration = Mathf.FloorToInt(_cellRate * durationFactor_MIN);
+            maxDuration = Mathf.FloorToInt(_cellRate * durationFactor_MAX);
+            cellRate = _cellRate;
+            timer_writeCell = 0;
+            currentFrame = 0;
             currentRow = 0;
             currentCell = 0;
 
             InitRows();
-            ResetTimer();
+            ResetTimer_WRITE();
         }
-        private void ResetTimer()
+        private void ResetTimer_WRITE()
         {
-            timer = Random.Range(minDuration, maxDuration);
+            int _WRITE_COUNT = Random.Range(1, 10);
+            timer_writeCell = Mathf.FloorToInt(Random.Range(minDuration, maxDuration));
+            for (int i = 0; i < _WRITE_COUNT; i++)
+            {
+                NextFrame();
+                rows[currentRow].Set(currentCell, true);
+            }
+
+            currentFrame += _WRITE_COUNT * cellRate;
         }
         private void InitRows()
         {
+            rows = new List<BitArray>(totalRows);
             for (int i = 0; i < totalRows; i++)
             {
-                rows[i] = new BitArray(rowLength, false);
+                rows.Add(new BitArray(rowLength, false));
             }
         }
         public void ClearRow(int _rowIndex)
@@ -142,12 +156,39 @@ namespace DATA
                 _CELLS.Set(i, false);
             }
         }
-        public void Update(float _deltaTime)
+        void NextFrame(){
+            currentFrame++;
+            int _RAW_FRAME = Mathf.FloorToInt(currentFrame / (float)cellRate) % totalCells;
+            currentCell = _RAW_FRAME % rowLength;
+
+            int _TEST_NEW_ROW = Mathf.FloorToInt(_RAW_FRAME / (float)rowLength);
+            if(currentRow != _TEST_NEW_ROW){
+                ClearRow((currentRow + 1) % totalRows);
+                currentRow = _TEST_NEW_ROW;
+            }
+            timer_writeCell--;
+        }
+        public void Update()
         {
-            timer -= _deltaTime;
-            if (timer < 0)
+            for (int i = 0; i < framesPerTick; i++)
             {
-                ResetTimer();
+                NextFrame();
+            }
+            if (timer_writeCell < 0)
+            {
+                ResetTimer_WRITE();
+            }
+        }
+        public void Draw(float _x, float _y, float _w, float _h, Color _col, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO){
+            float _ACTIVE_AREA = _h * _gutterRatio;
+            float _GUTTER = (_h - _ACTIVE_AREA) / ((totalRows - 1));
+            float _ROW_HEIGHT = _ACTIVE_AREA / totalRows;
+
+            for (int i = 0; i < totalRows; i++)
+            {
+                int _ROW_INDEX = ((currentRow + totalRows) - i) % totalRows;
+                BitArray _ROW_CELLS = rows[_ROW_INDEX];
+                GL_DRAW.Draw_RECT_CELLS(_x, _y + (i*_ROW_HEIGHT) + (i*_GUTTER),_w, _ROW_HEIGHT, _ROW_CELLS, Color.white,1);
             }
         }
     }

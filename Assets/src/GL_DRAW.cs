@@ -534,6 +534,9 @@ public class GL_DRAW
 
         GL.PopMatrix();
     }
+
+
+
     public static void Draw_ARC_CELLS(float _x, float _y, float _radius_START, float _thickness, BitArray _cells, Color _col, float _angle_START = 0, float _angle_END = 1, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO, int _segmentSides = HUD.DEFAULT_ARC_SIDES, float _rotation = 0)
     {
         int _TOTAL_CELLS = _cells.Length;
@@ -559,6 +562,30 @@ public class GL_DRAW
             _CELLS.Set(i, (_cells[i] == 1));
         }
         Draw_ARC_CELLS(_x, _y, _radius_START, _thickness, _CELLS, _col, _angle_START, _angle_END, _gutterRatio, _segmentSides, _rotation);
+    }
+    public static void Draw_RECT_CELLS(float _x, float _y, float _w, float _h, BitArray _cells, Color _col, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO, float _rotation = 0)
+    {
+        int _TOTAL_CELLS = _cells.Length;
+        float _ACTIVE_AREA = _w * _gutterRatio;
+        float _CELL_SIZE = _ACTIVE_AREA / _TOTAL_CELLS;
+        float _GUTTER_SIZE = (_w- _ACTIVE_AREA) / (_TOTAL_CELLS - 1);
+
+        for (int i = 0; i < _TOTAL_CELLS; i++)
+        {
+            if (_cells.Get(i))
+            {
+                GL_DRAW.Draw_RECT_FILL(_x + (i * _CELL_SIZE) + (i * _GUTTER_SIZE), _y, _CELL_SIZE, _h, _col);
+            }
+        }
+    }
+    public static void Draw_RECT_CELLS(float _x, float _y, float _w, float _h, Color _col, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO, float _rotation = 0, params int[] _cells)
+    {
+        BitArray _CELLS = new BitArray(_cells.Length);
+        for (int i = 0; i < _cells.Length; i++)
+        {
+            _CELLS.Set(i, (_cells[i] == 1));
+        }
+        Draw_RECT_CELLS(_x, _y, _w, _h, _CELLS, _col, _gutterRatio, _rotation);
     }
     public static void Draw_MATRIX_RADIAL(float _x, float _y, float _radius_START, float _radius_END, int _cells_angle, int _cells_radius, Color _col, BitArray _cells, int _sides = HUD.DEFAULT_ARC_SIDES, float _angle_START = 0, float _angle_END = 1, float _gutterRatio_ANGLE = HUD.DEFAULT_GUTTER_RATIO, float _gutterRatio_RADIUS = HUD.DEFAULT_GUTTER_RATIO, float _rotation = 0)
     {
