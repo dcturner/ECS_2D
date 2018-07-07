@@ -100,6 +100,57 @@ namespace DATA
             colour = _col;
         }
     }
+
+    public struct DataSprawl
+    {
+
+        List<BitArray> rows;
+        int rowLength, totalRows, currentRow, currentCell;
+        float timer, minDuration, maxDuration, cellsPerSecond;
+        public DataSprawl(int _totalRows, int _rowLength, float _minDuration = 0.1f, float _maxDuration = 1f, float _cellsPerSecond = 0.1f)
+        {
+            totalRows = _totalRows;
+            rowLength = _rowLength;
+            rows = new List<BitArray>(totalRows);
+
+            minDuration = _minDuration;
+            maxDuration = _maxDuration;
+            cellsPerSecond = _cellsPerSecond;
+            timer = 0;
+            currentRow = 0;
+            currentCell = 0;
+
+            InitRows();
+            ResetTimer();
+        }
+        private void ResetTimer()
+        {
+            timer = Random.Range(minDuration, maxDuration);
+        }
+        private void InitRows()
+        {
+            for (int i = 0; i < totalRows; i++)
+            {
+                rows[i] = new BitArray(rowLength, false);
+            }
+        }
+        public void ClearRow(int _rowIndex)
+        {
+            BitArray _CELLS = rows[_rowIndex];
+            for (int i = 0; i < rowLength; i++)
+            {
+                _CELLS.Set(i, false);
+            }
+        }
+        public void Update(float _deltaTime)
+        {
+            timer -= _deltaTime;
+            if (timer < 0)
+            {
+                ResetTimer();
+            }
+        }
+    }
     public class VALUES
     {
 

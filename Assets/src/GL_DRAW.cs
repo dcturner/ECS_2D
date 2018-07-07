@@ -63,12 +63,16 @@ public class GL_DRAW
         GL.Color(_col);
         GL.Vertex3(ScreenX(_x), ScreenX(_y), Z);
     }
-    public static void Draw_LINE(float _startX, float _startY, float _endX, float _endY, Color _col)
+    public static void Draw_LINE(float _startX, float _startY, float _endX, float _endY, Color _col_start, Color _col_end)
     {
         GL.Begin(GL.LINES);
-        Add_VERT(_startX, _startY, _col);
-        Add_VERT(_endX, _endY, _col);
+        Add_VERT(_startX, _startY, _col_start);
+        Add_VERT(_endX, _endY, _col_end);
         GL.End();
+    }
+    public static void Draw_LINE(float _startX, float _startY, float _endX, float _endY, Color _col)
+    {
+        Draw_LINE(_startX, _startY, _endX, _endY, _col, _col);
     }
     public static void Draw_BG(Color _topLeft, Color _topRight, Color _bottomRight, Color _bottomLeft)
     {
@@ -407,8 +411,8 @@ public class GL_DRAW
         }
 
         // draw bookends first
-        Draw_LINE(_x, _y, _x + _width_MAJOR, _y, _col_MAJOR);
-        Draw_LINE(_x, _y + _size, _x + _width_MAJOR, _y + _size, _col_MAJOR);
+        Draw_LINE(_x, _y, _x + _width_MAJOR, _y, _col_MAJOR, _col_MAJOR);
+        Draw_LINE(_x, _y + _size, _x + _width_MAJOR, _y + _size, _col_MAJOR, _col_MAJOR);
 
         for (int i = 0; i < _divisions; i++)
         {
@@ -416,12 +420,12 @@ public class GL_DRAW
             if (i % _subDiv == 0)
             {
                 //MAJOR MARK
-                Draw_LINE(0, _DIST, _width_MAJOR, _DIST, _col_MAJOR);
+                Draw_LINE(0, _DIST, _width_MAJOR, _DIST, _col_MAJOR, _col_MAJOR);
             }
             else
             {
                 //    // MINOR MARK
-                Draw_LINE(0, _DIST, _width_MINOR, _DIST, _col_MINOR);
+                Draw_LINE(0, _DIST, _width_MINOR, _DIST, _col_MINOR, _col_MAJOR);
             }
         }
         GL.PopMatrix();
@@ -482,28 +486,29 @@ public class GL_DRAW
         }
     }
 
-    public static void Draw_MATRIX_RECT(float _x, float _y, float _w, float _h, int _cellsX, int _cellsY, Color _col, BitArray _cells, float _rotation = 0)
+    public static void Draw_MATRIX_RECT(float _x, float _y, float _w, float _h, int _cellsX, int _cellsY, Color _col, BitArray _cells, float _rotation = 1)
     {
-        GL.PushMatrix();
-        TransformMatrix(_x, _y, _rotation);
+        //GL.PushMatrix();
+        //GL.LoadPixelMatrix();
+        //TransformMatrix(_x, _y, _rotation);
 
         float _DIV_X = _w / _cellsX;
-        float _DIV_Y = _h / _cellsY;
 
+        float _DIV_Y = _h / _cellsY;
         for (int i = 0; i < _cells.Length; i++)
         {
             if (_cells.Get(i))
             {
                 Draw_RECT_FILL(
-                    (i % _cellsX) * _DIV_X,
-                    Mathf.FloorToInt(i / _cellsX) * _DIV_Y,
+                    _x + (i % _cellsX) * _DIV_X,
+                    _y + Mathf.FloorToInt(i / _cellsX) * _DIV_Y,
                     _DIV_X,
                     _DIV_Y, _col
                 );
             }
         }
 
-        GL.PopMatrix();
+        //GL.PopMatrix();
     }
     public static void Draw_MATRIX_NGON(float _x, float _y, float _w, float _h, int _sides, float _ngonScaleFactor, int _cellsX, int _cellsY, Color _col, BitArray _cells, float _rotation = 0)
     {

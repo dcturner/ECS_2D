@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class GL_TXT
 {
-    public static void Draw_Glyph(char _char, float _x, float _y, float _size, Color _col)
+    public static void Draw_Glyph(char _char, float _x, float _y, float _size, Color _col, float _rotation = 1)
     {
         BitArray _CELLS = GL_FONT_3x5.Get(_char);
-        GL_DRAW.Draw_MATRIX_RECT(_x, _y, _size * 3, -GL_DRAW.LockAspect_Y(_size * 5), 3, 5, _col, _CELLS);
+        GL_DRAW.Draw_MATRIX_RECT(_x, _y, _size * 3, -GL_DRAW.LockAspect_Y(_size * 5), 3, 5, _col, _CELLS, _rotation);
     }
     public static void Draw_MATRIX_ANIM_FRAME(List<BitArray> _frames, int _frame, int _cellsX, int _cellsY, int _totalFrames, float _x, float _y, float _w, Color _col)
     {
@@ -22,12 +22,12 @@ public class GL_TXT
         GL_DRAW.Draw_MATRIX_NGON(_x, _y, _size * 3, -_size * 5, _sides, _ngonScaleFactor, 3, 5, _col, _CELLS);
     }
 
-    public static void Txt(string _str, float _x, float _y, float _cellSize, Color _col)
+    public static void Txt(string _str, float _x, float _y, float _cellSize, Color _col, float _rotation = 1)
     {
         float _CHAR_WIDTH = _cellSize * 3;
         for (int i = 0; i < _str.Length; i++)
         {
-            Draw_Glyph(_str[i], _x + (_CHAR_WIDTH * i) + (_cellSize * i), _y, _cellSize, _col);
+            Draw_Glyph(_str[i], _x + (_CHAR_WIDTH * i) + (_cellSize * i), _y, _cellSize, _col, _rotation);
         }
     }
     public static void Txt_NGON(string _str, float _x, float _y, float _cellSize, float _ngonScaleFactor, int _sides, Color _col)

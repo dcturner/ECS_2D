@@ -1,13 +1,14 @@
 ﻿<Properties StartupConfiguration="{2F109B89-5344-86F7-022D-F784E8CE26C4}|">
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/src/Anim.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/src/GL_TXT.cs">
     <Files>
-      <File FileName="Assets/src/UI_Core.cs" Line="22" Column="9" />
-      <File FileName="Assets/src/GL_DRAW.cs" Line="563" Column="32" />
-      <File FileName="Assets/src/HUD.cs" Line="268" Column="35" />
+      <File FileName="Assets/src/UI_Core.cs" Line="25" Column="201" />
+      <File FileName="Assets/src/GL_DRAW.cs" Line="75" Column="63" />
+      <File FileName="Assets/src/HUD.cs" Line="231" Column="27" />
       <File FileName="Assets/src/DATA.cs" Line="149" Column="75" />
       <File FileName="Assets/src/COLOUR.cs" Line="38" Column="268" />
-      <File FileName="Assets/src/Anim.cs" Line="5" Column="24" />
+      <File FileName="Assets/src/Anim.cs" Line="31" Column="39" />
+      <File FileName="Assets/src/GL_TXT.cs" Line="92" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

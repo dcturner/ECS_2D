@@ -8,6 +8,7 @@ public class HUD
 {
     public const float DEFAULT_GUTTER_RATIO = 0.95f;
     public const int DEFAULT_ARC_SIDES = 24;
+    public const float DEFAULT_TEXT_MARGIN = 0.01f;
     public static Color DEFAULT_LINE_COLOUR = Color.white;
 
     #region DRAWING
@@ -194,6 +195,26 @@ public class HUD
         GL_DRAW.Draw_RECT_FILL(_x + _w + (_h * 0.05f), _y, (_h * 0.05f), _h, _col_PANEL);
         GL_TXT.Txt(_str, _x + (_w * _txt_x), _y + (_h * _txt_y), _txt_height / 5, _col_TXT);
 
+    }
+    public static void Draw_LABEL_LINE_X(string _str, float _x, float _y, float _size, float _txt_height, Color _col_line_START, Color _col_line_END, Color _col_txt, float _txt_margin = DEFAULT_TEXT_MARGIN, float _rotation = 1)
+    {
+        GL.PushMatrix();
+        GL_DRAW.TransformMatrix(_x, _y, _rotation);
+
+        GL_DRAW.Draw_LINE(0, 0, 0 + _size, 0, _col_line_START, _col_line_END);
+        GL_TXT.Txt("test", 0 + _size + _txt_margin, 0, _txt_height / 5, _col_txt);
+
+        GL.PopMatrix();
+    }
+    public static void Draw_LABEL_LINE_Y(string _str, float _x, float _y, float _size, float _txt_height, Color _col_line_START, Color _col_line_END, Color _col_txt, float _txt_margin = DEFAULT_TEXT_MARGIN, float _rotation = 1)
+    {
+        GL.PushMatrix();
+        GL_DRAW.TransformMatrix(_x, _y, _rotation);
+
+        GL_DRAW.Draw_LINE(0, 0, 0, _size, _col_line_START, _col_line_END);
+        GL_TXT.Txt("test", 0, _size + _txt_margin, _txt_height / 5, _col_txt);
+
+        GL.PopMatrix();
     }
     #region < HISTOGRAMS
 
