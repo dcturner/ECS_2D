@@ -70,6 +70,37 @@ public class GL_DRAW
         Add_VERT(_endX, _endY, _col);
         GL.End();
     }
+    public static void Draw_BG(Color _topLeft, Color _topRight, Color _bottomRight, Color _bottomLeft)
+    {
+        Draw_GRADIENT_RECT_4(0, 0, 1, 1, _topLeft, _topRight, _bottomRight, _bottomLeft);
+    }
+    public static void Draw_GRADIENT_RECT_4(float _x, float _y, float _w, float _h, Color _topLeft, Color _topRight, Color _bottomRight, Color _bottomLeft)
+    {
+        GL.Begin(GL.QUADS);
+        Add_VERT(_x, _y, _bottomLeft);
+        Add_VERT(_x + _w, _y, _bottomRight);
+        Add_VERT(_x + _w, _y + _h, _topRight);
+        Add_VERT(_x, _y + _h, _topLeft);
+        GL.End();
+    }
+    public static void Draw_GRADIENT_RECT_X(float _x, float _y, float _w, float _h, Color _colA, Color _colB)
+    {
+        GL.Begin(GL.QUADS);
+        Add_VERT(_x, _y, _colA);
+        Add_VERT(_x + _w, _y, _colB);
+        Add_VERT(_x + _w, _y + _h, _colB);
+        Add_VERT(_x, _y + _h, _colA);
+        GL.End();
+    }
+    public static void Draw_GRADIENT_RECT_Y(float _x, float _y, float _w, float _h, Color _colA, Color _colB)
+    {
+        GL.Begin(GL.QUADS);
+        Add_VERT(_x, _y, _colA);
+        Add_VERT(_x + _w, _y, _colA);
+        Add_VERT(_x + _w, _y + _h, _colB);
+        Add_VERT(_x, _y + _h, _colB);
+        GL.End();
+    }
     public static void Draw_POLY_LINE(Vector3[] _verts, Color[] _colours)
     {
         GL.Begin(GL.LINE_STRIP);
@@ -377,11 +408,11 @@ public class GL_DRAW
 
         // draw bookends first
         Draw_LINE(_x, _y, _x + _width_MAJOR, _y, _col_MAJOR);
-        Draw_LINE(_x, _y+_size, _x + _width_MAJOR, _y+_size, _col_MAJOR);
+        Draw_LINE(_x, _y + _size, _x + _width_MAJOR, _y + _size, _col_MAJOR);
 
         for (int i = 0; i < _divisions; i++)
         {
-            float _DIST = Mathf.Clamp((i * _DIV + _offset)%_size, _y, _y+_size);
+            float _DIST = Mathf.Clamp((i * _DIV + _offset) % _size, _y, _y + _size);
             if (i % _subDiv == 0)
             {
                 //MAJOR MARK
