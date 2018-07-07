@@ -7,6 +7,7 @@ using COLOUR;
 public class HUD
 {
     public const float DEFAULT_GUTTER_RATIO = 0.95f;
+    public const int DEFAULT_ARC_SIDES = 24;
     public static Color DEFAULT_LINE_COLOUR = Color.white;
 
     #region DRAWING
@@ -49,7 +50,7 @@ public class HUD
                 (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
         }
     }
-    public static void Draw_ArcGraph(int _sides, Graph _graph, float _x, float _y, float _radius_START, float _radius_END, float _angle_MIN, float _angle_MAX, Color _col_MIN, Color _col_MAX, bool _alphaFade, float _gutterRatio = DEFAULT_GUTTER_RATIO)
+    public static void Draw_ArcGraph(Graph _graph, float _x, float _y, float _radius_START, float _radius_END, float _angle_MIN, float _angle_MAX, Color _col_MIN, Color _col_MAX, bool _alphaFade = false, int _sides = DEFAULT_ARC_SIDES, float _gutterRatio = DEFAULT_GUTTER_RATIO)
     {
         int _COUNT = _graph.binCount;
         float _DRAW_RANGE = _radius_END - _radius_START;
@@ -187,7 +188,7 @@ public class HUD
     }
     #endregion _PARTITIONS >
 
-    public static void Draw_LABEL(string _str, float _x, float _y, float _w, float _h, float _txt_height, float _txt_x, float _txt_y, Color _col_PANEL, Color _col_TXT)
+    public static void Draw_LABEL_BOX(string _str, float _x, float _y, float _w, float _h, float _txt_height, float _txt_x, float _txt_y, Color _col_PANEL, Color _col_TXT)
     {
         GL_DRAW.Draw_RECT_FILL(_x, _y, _w, _h, _col_PANEL);
         GL_DRAW.Draw_RECT_FILL(_x + _w + (_h * 0.05f), _y, (_h * 0.05f), _h, _col_PANEL);

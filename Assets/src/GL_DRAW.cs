@@ -529,4 +529,60 @@ public class GL_DRAW
 
         GL.PopMatrix();
     }
+    public static void Draw_ARC_CELLS(float _x, float _y, float _radius_START, float _thickness, BitArray _cells, Color _col, float _angle_START = 0, float _angle_END = 1, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO, int _segmentSides = HUD.DEFAULT_ARC_SIDES, float _rotation = 0)
+    {
+        int _TOTAL_CELLS = _cells.Length;
+        float _ANGLE_RANGE = _angle_END - _angle_START;
+        float _ANGLE_DRAW_AREA = _ANGLE_RANGE * _gutterRatio;
+        float _DIV_ANGLE = _ANGLE_DRAW_AREA / _TOTAL_CELLS;
+        float _GUTTER_ANGLE = (_ANGLE_RANGE - _ANGLE_DRAW_AREA) / (_TOTAL_CELLS - 1);
+
+        for (int i = 0; i < _TOTAL_CELLS; i++)
+        {
+            if (_cells.Get(i))
+            {
+                float _START_ANGLE = _angle_START + ((i * _DIV_ANGLE) + (i * _GUTTER_ANGLE));
+                GL_DRAW.Draw_ARC_FILL(_segmentSides, _x, _y, _START_ANGLE, _START_ANGLE + _DIV_ANGLE, _radius_START, _radius_START + _thickness, _col, _rotation);
+            }
+        }
+    }
+    public static void Draw_ARC_CELLS(float _x, float _y, float _radius_START, float _thickness, Color _col, float _angle_START = 0, float _angle_END = 1, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO, int _segmentSides = HUD.DEFAULT_ARC_SIDES, float _rotation = 0, params int[] _cells)
+    {
+        BitArray _CELLS = new BitArray(_cells.Length);
+        for (int i = 0; i < _cells.Length; i++)
+        {
+            _CELLS.Set(i, (_cells[i] == 1));
+        }
+        Draw_ARC_CELLS(_x, _y, _radius_START, _thickness, _CELLS, _col, _angle_START, _angle_END, _gutterRatio, _segmentSides, _rotation);
+    }
+    public static void Draw_MATRIX_RADIAL(float _x, float _y, float _radius_START, float _radius_END, int _cells_angle, int _cells_radius, Color _col, BitArray _cells, int _sides = HUD.DEFAULT_ARC_SIDES, float _angle_START = 0, float _angle_END = 1, float _gutterRatio_ANGLE = HUD.DEFAULT_GUTTER_RATIO, float _gutterRatio_RADIUS = HUD.DEFAULT_GUTTER_RATIO, float _rotation = 0)
+    {
+        float _RADIUS_RANGE = _radius_END - _radius_START;
+        float _RADIUS_DRAW_AREA = _RADIUS_RANGE * _gutterRatio_RADIUS;
+        float _GUTTER_RADIUS = (_RADIUS_RANGE - _RADIUS_DRAW_AREA) / (_cells_radius - 1);
+        float _DIV_RADIUS = _RADIUS_DRAW_AREA / _cells_radius;
+        for (int i = 0; i < _cells_radius; i++)
+        {
+            BitArray _RING_CELLS = new BitArray(_cells_angle);
+            int _startIndex = i * _cells_angle;
+            for (int cellIndex = 0; cellIndex < _cells_angle; cellIndex++)
+            {
+                _RING_CELLS.Set(cellIndex, _cells[_startIndex + cellIndex]);
+            }
+            float _RAD_START = (i * _DIV_RADIUS) + (i * _GUTTER_RADIUS);
+            Draw_ARC_CELLS(_x, _y, _RAD_START, _DIV_RADIUS, _RING_CELLS, _col, _angle_START, _angle_END, _gutterRatio_ANGLE, _sides, _rotation);
+        }
+
+    }
+    public static void Draw_MATRIX_RADIAL(float _x, float _y, float _radius_START, float _radius_END, int _cells_angle, int _cells_radius, Color _col, float _angle_START = 0, float _angle_END = 1, float _rotation = 0, int _sides = HUD.DEFAULT_ARC_SIDES, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO, params int[] _cells)
+    {
+        BitArray _CELLS = new BitArray(_cells.Length);
+        for (int i = 0; i < _cells.Length; i++)
+        {
+            _CELLS.Set(i, (_cells[i] == 1));
+        }
+
+        //Draw_MATRIX_RADIAL(_x, _y, _radius_START, _radius_END, _cells_angle, _cells_radius, _gutterRatio, _col, _CELLS, _sides, _angle_START, _angle_END, _rotation);
+    }
+
 }
