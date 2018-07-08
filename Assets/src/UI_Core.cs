@@ -7,6 +7,8 @@ public class UI_Core : MonoBehaviour
 {
     DATA.Histogram _HIST;
     DATA.DataSprawl _SPRAWL;
+
+    WINDOW_HISTOGRAMS wHist;
     private void Awake()
     {
         GL_FONT_3x5.Init();
@@ -14,6 +16,9 @@ public class UI_Core : MonoBehaviour
         COL.INIT_PALETTES();
         _HIST = new DATA.Histogram(VALUES.RandomValues_01(20));
         _SPRAWL = new DataSprawl(30, 64, 10, 1, 30);
+
+        wHist = new WINDOW_HISTOGRAMS(0.5f, 0.5f, 0.25f, 0.25f);
+        wHist.Init(_offsetA: 0.1f, _offsetB: 0.2f, _incrementA:0.01f, _incrementB:0.02f, _gutterRatio:1, _colour_A:3);
 
     }
     private void OnPostRender()
@@ -25,19 +30,13 @@ public class UI_Core : MonoBehaviour
         Palette _PAL = COL.Get_Palette(0);
         GL.LoadPixelMatrix();
 
-        //_SPRAWL.Draw(0.25f, 0.2f, 0.2f, 0.4f, Color.white);
 
-        int _COUNT = 10;
-        for (int i = 0; i < _COUNT; i++)
-        {
-            float _R = 0.01f * i;
-            float _FACTOR = (float)i / _COUNT;
-            Color _COL = COL.HSV(0, 0.2f + _FACTOR * 0.8f,1);
-            HUD.Draw_HISTOGRAM_RADIAL(VALUES.RandomValues_NOISE_TIME(i * 15, 1, 0.01f * i, 1.5f, 0.05f * i), 0.5f, 0.5f, _R, _R + 0.01f, _COL, _COL,true, _rotation: Anim.Runtime(0.01f * i));
-        }
+        wHist.Set_X(_MX);
+        wHist.Set_Y(_MY);
+        wHist.Draw();
     }
 
     void Update_HUD_Items(){
-        _SPRAWL.Update();
+        wHist.Update();   
     }
 }

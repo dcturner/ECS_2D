@@ -74,6 +74,9 @@ public class GL_DRAW
     {
         Draw_LINE(_startX, _startY, _endX, _endY, _col, _col);
     }
+    public static void DRAW_POINT(float _x, float _y, Color _col){
+        Draw_LINE(_x, _y, _x + 0.001f, _y + 0.001f, _col);
+    }
     public static void Draw_BG(Color _topLeft, Color _topRight, Color _bottomRight, Color _bottomLeft)
     {
         Draw_GRADIENT_RECT_4(0, 0, 1, 1, _topLeft, _topRight, _bottomRight, _bottomLeft);
@@ -471,7 +474,59 @@ public class GL_DRAW
             }
         }
     }
+    public static void Draw_ZOOM_GRID(float _x, float _y, float _w, float _h, Color _col, int _divsX = 10, int _divsY = 10, float _originX = 0.5f, float _originY = 0.5f, float _maxLength = 0.01f)
+    {
+        float _DIV_X = _w / _divsX;
+        float _DIV_Y = _h / _divsY;
+        Vector2 _VEC_ORIGIN = new Vector2(_originX, _originY);
+        for (int x = 0; x <= _divsX; x++)
+        {
+            float _CUR_X = _x + (x * _DIV_X);
+            float _DIST_X = (_originX - _CUR_X) * _maxLength;
+            for (int y = 0; y <= _divsY; y++)
+            {
+                float _CUR_Y = _y + (y * _DIV_Y);
+                float _DIST_Y = (_originY - _CUR_Y) * _maxLength;
 
+                Draw_LINE(_CUR_X, _CUR_Y, _CUR_X + _DIST_X, _CUR_Y + _DIST_Y, _col);
+            }
+        }
+    }
+    public static void Draw_ZOOM_GRID(float _x, float _y, float _w, float _h,Color _col_MIN, Color _color_MAX, int _divsX=10, int _divsY=10,  float _originX = 0.5f, float _originY = 0.5f, float _maxLength = 0.01f)
+    {
+        float _DIV_X = _w / _divsX;
+        float _DIV_Y = _h / _divsY;
+        Vector2 _VEC_ORIGIN = new Vector2(_originX, _originY);
+        for (int x = 0; x <= _divsX; x++)
+        {
+            float _CUR_X = _x +(x * _DIV_X);
+            float _DIST_X = (_originX - _CUR_X) * _maxLength;
+            for (int y = 0; y <= _divsY; y++)
+            {
+                float _CUR_Y = _y + (y * _DIV_Y);
+                float _DIST_Y = (_originY - _CUR_Y) * _maxLength;
+                float _DIST = Vector2.Distance(_VEC_ORIGIN, new Vector2(_CUR_X, _CUR_Y))/_w;
+                Color _COL = Color.Lerp(_col_MIN, _color_MAX, _DIST);
+
+                Draw_LINE(_CUR_X, _CUR_Y, _CUR_X+ _DIST_X, _CUR_Y +  _DIST_Y, _COL);
+            }
+        }
+    }
+    public static void Draw_GRID_DOT(float _x, float _y, float _w, float _h, int _divsX, int _divsY,Color _col)
+    {
+        float _DIV_X = _w / _divsX;
+        float _DIV_Y = _h / _divsY;
+        float _DIV_X_PT = _DIV_X * 1.5f;
+        float _DIV_Y_PT = _DIV_Y * 1.5f;;
+
+        for (int x = 0; x <= _divsX; x++)
+        {
+            for (int y = 0; y <= _divsY; y++)
+            {
+                DRAW_POINT(_x + (x * _DIV_X), _y + (y * _DIV_Y), _col);
+            }
+        }
+    }
     public static void Draw_GRID_NGON(float _x, float _y, float _w, float _h, int _divsX, int _divsY, int _sides, float _ngonSize, Color _col)
     {
         float _DIV_X = _w / _divsX;
@@ -510,6 +565,7 @@ public class GL_DRAW
 
         //GL.PopMatrix();
     }
+
     public static void Draw_MATRIX_NGON(float _x, float _y, float _w, float _h, int _sides, float _ngonScaleFactor, int _cellsX, int _cellsY, Color _col, BitArray _cells, float _rotation = 0)
     {
         GL.PushMatrix();

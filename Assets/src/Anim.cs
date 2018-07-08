@@ -26,9 +26,9 @@ public static class Anim
         return Mathf.FloorToInt((Time.realtimeSinceStartup + _offset) * _rate);
     }
 
-    public static float PNoise(float _rateA = 1, float _rateB = 1, float _offsetA = 0, float _offsetB = 0, float _min = 0, float _max = 1)
+    public static float PNoise(float _rateA = 1, float _rateB = 1, float _offsetA = 0, float _offsetB = 0, float _incrementA = 0f,float _incrementB = 0f, float _min = 0, float _max = 1)
     {
-        return _min + (_max - _min) * Mathf.PerlinNoise(Anim.Runtime(_rateA, _offsetA), Anim.Runtime(_rateB, _offsetB));
+        return _min + (_max - _min) * Mathf.PerlinNoise(Anim.Runtime(_rateA, _incrementA)+_offsetA, Anim.Runtime(_rateB, _incrementB)+_offsetB);
     }
     public static Color Colour_OSCILLATOR(Color _A, Color _B, float _rate = 1, float _offset = 0)
     {

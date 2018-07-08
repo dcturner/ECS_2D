@@ -26,11 +26,20 @@ namespace DATA
         {
             return values[_binIndex];
         }
-        public void UpdateNoise(float _rateA=1, float _offsetA=0, float _rateB=1, float _offsetB=0)
+        public void UpdateNoise(float _rateA=1, float _offsetA=0,float _incrementA = 0f, float _rateB=1, float _offsetB=0, float _incrementB = 0)
         {
             for (int i = 0; i < binCount; i++)
             {
-                Set_Value(i, Anim.PNoise(_rateA, _offsetA*i, _rateB, _offsetB*i));
+                Set_Value(i, Anim.PNoise(
+                    // A
+                    _rateA: _rateA,
+                    _offsetA: _offsetA*i,
+                    _incrementA: _incrementA*i,
+                    // B
+                    _rateB: _rateB,
+                    _offsetB: _offsetB*i,
+                    _incrementB: _incrementB*i
+                ));
             }
         }
     }
