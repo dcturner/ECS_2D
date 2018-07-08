@@ -232,7 +232,7 @@ namespace DATA
             }
             return _RESULT;
         }
-        public static float[] RandomValues_NOISE_TIME(int _count, float _rateA = 1, float _rateB = 1, float _offsetA = 0, float _offsetB = 0)
+        public static float[] RandomValues_NOISE_TIME(int _count, float _rateA = 1, float _rateB = 1.1f, float _offsetA = 0.01f, float _offsetB = 0.05f)
         {
             float[] _RESULT = new float[_count];
             for (int i = 0; i < _count; i++)

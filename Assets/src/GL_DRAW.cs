@@ -68,11 +68,22 @@ public class GL_DRAW
         GL.Color(_col);
         GL.Vertex3(ScreenX(_x), ScreenY(_y), Z);
     }
+    public static void Add_VERT(Vert _v)
+    {
+        GL.Color(_v.c);
+        GL.Vertex3(ScreenX(_v.x), ScreenY(_v.y), Z);
+    }
     public static void Add_VERT_1to1(float _x, float _y, Color _col)
     {
         GL.Color(_col);
         GL.Vertex3(ScreenX(_x), ScreenX(_y), Z);
     }
+    public static void Add_VERT_1to1(Vert _v)
+    {
+        GL.Color(_v.c);
+        GL.Vertex3(ScreenX(_v.x), ScreenX(_v.y), Z);
+    }
+
     public static void Draw_LINE(float _startX, float _startY, float _endX, float _endY, Color _col_start, Color _col_end)
     {
         GL.Begin(GL.LINES);
@@ -137,13 +148,35 @@ public class GL_DRAW
         for (int vertIndex = 0; vertIndex < _verts.Length; vertIndex++)
         {
             Vert _V = _verts[vertIndex];
-            Add_VERT(_V.x, _V.y, _V.c); ;
+            Add_VERT(_V); ;
         }
         GL.End();
     }
-
-    public static void Draw_POLY_FILL(params Vert[] _verts)
+    public static void Draw_POLY_LINE_CLOSED(Color _col, params Vector2[] _verts)
     {
+        GL.Begin(GL.LINE_STRIP);
+        Vector2 _start = _verts[0];
+        Add_VERT(_start.x, _start.y, _col);
+        for (int vertIndex = 1; vertIndex < _verts.Length; vertIndex++)
+        {
+            Vector2 _tempPos = _verts[vertIndex];
+            Add_VERT(_tempPos.x, _tempPos.y, _col);
+        }
+        Add_VERT(_start.x, _start.y, _col);
+        GL.End();
+    }
+    public static void Draw_POLY_LINE_CLOSE(params Vert[] _verts)
+    {
+        GL.Begin(GL.LINE_STRIP);
+        Vert _start = _verts[0];
+        Add_VERT(_start);
+        for (int vertIndex = 1; vertIndex < _verts.Length; vertIndex++)
+        {
+            Vert _V = _verts[vertIndex];
+            Add_VERT(_V);
+        }
+        Add_VERT(_start);
+        GL.End();
     }
 
     public static void Draw_TRIANGLE(float _x, float _y, float _size, Color _col, float _rotation = 0)
@@ -203,6 +236,17 @@ public class GL_DRAW
 
         GL.End();
     }
+    public static void Draw_QUAD(Vert _a, Vert _b, Vert _c, Vert _d){
+        GL.Begin(GL.QUADS);
+
+        Add_VERT(_a);
+        Add_VERT(_b);
+        Add_VERT(_c);
+        Add_VERT(_d);
+
+        GL.End();
+    }
+
     public static void Draw_NGON_LINE
     (int _sides, float _x, float _y, float _size, Color _col, float _rotation = 0)
     {

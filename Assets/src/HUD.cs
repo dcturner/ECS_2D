@@ -245,18 +245,52 @@ public class HUD
             GL_DRAW.Draw_LINE(_CURRENT, _y, _CURRENT, _y + (_h * _values[i]), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
         }
     }
-    public static void Draw_HISTOGRAM_POLY_X(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, bool _alphaFade, params float[] _values)
+    public static void Draw_HISTOGRAM_POLY(float _x, float _y, float _w, float _h, Color _col, params float[] _values)
     {
         int _TOTAL_BINS = _values.Length;
+        int _TOTAL_VERTS = (_TOTAL_BINS * 2);
         float _DIV = _w / _TOTAL_BINS;
 
+        GL_DRAW.Vert[] _VERTS = new GL_DRAW.Vert[_TOTAL_VERTS];
 
         for (int i = 0; i < _TOTAL_BINS; i++)
         {
             float _CURRENT = _x + (_DIV * i);
+
+            // TOP VERT
+            float _BIN_VALUE = _values[i];
+            _VERTS[i] = new GL_DRAW.Vert(_CURRENT, _y + (_h * _BIN_VALUE), _col);
+
+            // BTM VERT
+            _VERTS[(_TOTAL_VERTS-1) - i] = new GL_DRAW.Vert(_CURRENT, _y, _col);
+        }
+        GL_DRAW.Draw_POLY_LINE_CLOSE(_VERTS);
+    }
+    public static void Draw_HISTOGRAM_POLY_FILL(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, params float[] _values)
+    {
+        int _TOTAL_BINS = _values.Length;
+        int _TOTAL_VERTS = (_TOTAL_BINS * 2);
+        float _DIV = _w / _TOTAL_BINS;
+
+        GL_DRAW.Vert[] _VERTS = new GL_DRAW.Vert[_TOTAL_VERTS+1];
+
+        for (int i = 0; i < _TOTAL_BINS; i++)
+        {
+            float _CURRENT = _x + (_DIV * i);
+
+            // TOP VERT
             float _BIN_VALUE = _values[i];
             Color _COL = Color.Lerp(_col_MIN, _col_MAX, _BIN_VALUE);
-            GL_DRAW.Draw_LINE(_CURRENT, _y, _CURRENT, _y + (_h * _values[i]), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
+            _VERTS[i] = new GL_DRAW.Vert(_CURRENT, _y + (_h * _BIN_VALUE), _COL);
+
+            // BTM VERT
+            _VERTS[_TOTAL_VERTS - i] = new GL_DRAW.Vert(_CURRENT, _y, _col_MIN);
+        }
+
+        // now draw the poly
+        for (int i = 0; i < _TOTAL_BINS-1; i++)
+        {
+            GL_DRAW.Draw_QUAD(_VERTS[i], _VERTS[i + 1], _VERTS[_TOTAL_VERTS - (i+1)], _VERTS[_TOTAL_VERTS - i]);
         }
     }
     public static void Draw_HISTOGRAM_LINE_Y(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, bool _alphaFade, Histogram _histogram)
