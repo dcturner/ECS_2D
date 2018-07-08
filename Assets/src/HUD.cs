@@ -258,7 +258,7 @@ public class HUD
             GL_DRAW.Draw_LINE(_x, _CURRENT, _x + (_w * _histogram.Get_Value(i)), _CURRENT, (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
         }
     }
-    public static void Draw_HISTOGRAM_LINE_Y(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, bool _alphaFade, params float[] _values)
+    public static void Draw_HISTOGRAM_LINE_Y(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, bool _alphaFade = false, params float[] _values)
     {
         int _TOTAL_BINS = _values.Length;
         float _DIV = _h / _TOTAL_BINS;
@@ -270,6 +270,30 @@ public class HUD
             Color _COL = Color.Lerp(_col_MIN, _col_MAX, _BIN_VALUE);
             GL_DRAW.Draw_LINE(_x, _CURRENT, _x + (_w * _values[i]), _CURRENT, (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
         }
+    }
+
+    public static void Draw_HISTOGRAM_RADIAL(float[] _values, float _x, float _y, float _radius_start, float _radius_end, Color _col_MIN, Color _col_MAX, bool _alphaFade = false, float _angle_start = 0, float _angle_end = 1, float _rotation = 1){
+        GL.PushMatrix();
+        GL_DRAW.TransformMatrix(_x, _y, _rotation);
+        int _TOTAL_BINS = _values.Length;
+        float _RANGE_RADIUS = _radius_end - _radius_start;
+        float _RANGE_ANGLE = (_angle_end - _angle_start) * GL_DRAW.PI2;
+        float _DIV_ANGLE = _RANGE_ANGLE / _TOTAL_BINS;
+
+        for (int i = 0; i < _TOTAL_BINS; i++)
+        {
+            float _CURRENT_ANGLE = _angle_start + (i * _DIV_ANGLE);
+            float _BIN_VALUE = _values[i];
+            Vector2 _POS_START = GL_DRAW.PolarCoord(_CURRENT_ANGLE, _radius_start);
+            Vector2 _POS_END = GL_DRAW.PolarCoord(_CURRENT_ANGLE, _radius_start + (_RANGE_RADIUS * _BIN_VALUE));
+            Color _COL = Color.Lerp(_col_MIN, _col_MAX, _BIN_VALUE);
+            GL_DRAW.Draw_LINE(_POS_START.x, GL_DRAW.LockAspect_Y(_POS_START.y), _POS_END.x,GL_DRAW.LockAspect_Y(_POS_END.y), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
+        }
+        GL.PopMatrix();
+    }
+    public static void Draw_HISTOGRAM_RADIAL(Histogram _histogram, float _x, float _y, float _radius_start, float _radius_end, Color _col_MIN, Color _col_MAX, bool _alphaFade = false, float _angle_start = 0, float _angle_end = 1, float _rotation = 1)
+    {
+        Draw_HISTOGRAM_RADIAL(_histogram.values, _x, _y, _radius_start, _radius_end, _col_MIN, _col_MAX, _alphaFade, _angle_start, _angle_end, _rotation);
     }
     public static void Draw_HISTOGRAM_BAR_X(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, float _gutterRatio, bool _alphaFade, params float[] _values)
     {

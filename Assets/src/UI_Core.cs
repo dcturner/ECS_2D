@@ -25,7 +25,16 @@ public class UI_Core : MonoBehaviour
         Palette _PAL = COL.Get_Palette(0);
         GL.LoadPixelMatrix();
 
-        _SPRAWL.Draw(0.25f, 0.2f, 0.2f, 0.4f, Color.white);
+        //_SPRAWL.Draw(0.25f, 0.2f, 0.2f, 0.4f, Color.white);
+
+        int _COUNT = 10;
+        for (int i = 0; i < _COUNT; i++)
+        {
+            float _R = 0.01f * i;
+            float _FACTOR = (float)i / _COUNT;
+            Color _COL = COL.HSV(0, 0.2f + _FACTOR * 0.8f,1);
+            HUD.Draw_HISTOGRAM_RADIAL(VALUES.RandomValues_NOISE_TIME(i * 15, 1, 0.01f * i, 1.5f, 0.05f * i), 0.5f, 0.5f, _R, _R + 0.01f, _COL, _COL,true, _rotation: Anim.Runtime(0.01f * i));
+        }
     }
 
     void Update_HUD_Items(){

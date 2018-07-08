@@ -5,7 +5,7 @@ using UnityEngine;
 public class GL_DRAW
 {
 
-    static float PI2 = Mathf.PI * 2.0f;
+   public static float PI2 = Mathf.PI * 2.0f;
     static float Z = 0f;
 
     public static float ScreenX(float _x)
