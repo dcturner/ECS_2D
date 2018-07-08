@@ -5,8 +5,19 @@ using UnityEngine;
 public class GL_DRAW
 {
 
-   public static float PI2 = Mathf.PI * 2.0f;
+    public static float PI2 = Mathf.PI * 2.0f;
     static float Z = 0f;
+    public struct Vert
+    {
+        public float x, y;
+        public Color c;
+        public Vert(float _x, float _y, Color _col)
+        {
+            x = _x;
+            y = _y;
+            c = _col;
+        }
+    }
 
     public static float ScreenX(float _x)
     {
@@ -50,7 +61,6 @@ public class GL_DRAW
         Matrix4x4 m = Matrix4x4.TRS(new Vector3(ScreenX(_x), ScreenY(_y), Z), Quaternion.Euler(0, 0, _rotation * 360f), new Vector3(_scaleX, _scaleY, 1));
 
         GL.MultMatrix(m * model);
-
     }
 
     public static void Add_VERT(float _x, float _y, Color _col)
@@ -74,7 +84,8 @@ public class GL_DRAW
     {
         Draw_LINE(_startX, _startY, _endX, _endY, _col, _col);
     }
-    public static void DRAW_POINT(float _x, float _y, Color _col){
+    public static void DRAW_POINT(float _x, float _y, Color _col)
+    {
         Draw_LINE(_x, _y, _x + 0.001f, _y + 0.001f, _col);
     }
     public static void Draw_BG(Color _topLeft, Color _topRight, Color _bottomRight, Color _bottomLeft)
@@ -108,30 +119,31 @@ public class GL_DRAW
         Add_VERT(_x, _y + _h, _colB);
         GL.End();
     }
-    public static void Draw_POLY_LINE(Vector3[] _verts, Color[] _colours)
+    public static void Draw_POLY_LINE(Color _col, params Vector2[] _verts)
     {
         GL.Begin(GL.LINE_STRIP);
 
         for (int vertIndex = 0; vertIndex < _verts.Length; vertIndex++)
         {
-            Vector3 _tempPos = _verts[vertIndex];
-            Color _tempColour = _colours[vertIndex % _colours.Length];
-            Add_VERT(_tempPos.x, _tempPos.y, _tempColour);
+            Vector2 _tempPos = _verts[vertIndex];
+            Add_VERT(_tempPos.x, _tempPos.y, _col);
         }
-
         GL.End();
     }
-    public static void Draw_POLY_LINE(Vector3[] _verts, Color _colour)
+    public static void Draw_POLY_LINE(params Vert[] _verts)
     {
         GL.Begin(GL.LINE_STRIP);
 
         for (int vertIndex = 0; vertIndex < _verts.Length; vertIndex++)
         {
-            Vector3 _tempPos = _verts[vertIndex];
-            Add_VERT(_tempPos.x, _tempPos.y, _colour);
+            Vert _V = _verts[vertIndex];
+            Add_VERT(_V.x, _V.y, _V.c); ;
         }
-
         GL.End();
+    }
+
+    public static void Draw_POLY_FILL(params Vert[] _verts)
+    {
     }
 
     public static void Draw_TRIANGLE(float _x, float _y, float _size, Color _col, float _rotation = 0)
@@ -492,32 +504,32 @@ public class GL_DRAW
             }
         }
     }
-    public static void Draw_ZOOM_GRID(float _x, float _y, float _w, float _h,Color _col_MIN, Color _color_MAX, int _divsX=10, int _divsY=10,  float _originX = 0.5f, float _originY = 0.5f, float _maxLength = 0.01f)
+    public static void Draw_ZOOM_GRID(float _x, float _y, float _w, float _h, Color _col_MIN, Color _color_MAX, int _divsX = 10, int _divsY = 10, float _originX = 0.5f, float _originY = 0.5f, float _maxLength = 0.01f)
     {
         float _DIV_X = _w / _divsX;
         float _DIV_Y = _h / _divsY;
         Vector2 _VEC_ORIGIN = new Vector2(_originX, _originY);
         for (int x = 0; x <= _divsX; x++)
         {
-            float _CUR_X = _x +(x * _DIV_X);
+            float _CUR_X = _x + (x * _DIV_X);
             float _DIST_X = (_originX - _CUR_X) * _maxLength;
             for (int y = 0; y <= _divsY; y++)
             {
                 float _CUR_Y = _y + (y * _DIV_Y);
                 float _DIST_Y = (_originY - _CUR_Y) * _maxLength;
-                float _DIST = Vector2.Distance(_VEC_ORIGIN, new Vector2(_CUR_X, _CUR_Y))/_w;
+                float _DIST = Vector2.Distance(_VEC_ORIGIN, new Vector2(_CUR_X, _CUR_Y)) / _w;
                 Color _COL = Color.Lerp(_col_MIN, _color_MAX, _DIST);
 
-                Draw_LINE(_CUR_X, _CUR_Y, _CUR_X+ _DIST_X, _CUR_Y +  _DIST_Y, _COL);
+                Draw_LINE(_CUR_X, _CUR_Y, _CUR_X + _DIST_X, _CUR_Y + _DIST_Y, _COL);
             }
         }
     }
-    public static void Draw_GRID_DOT(float _x, float _y, float _w, float _h, int _divsX, int _divsY,Color _col)
+    public static void Draw_GRID_DOT(float _x, float _y, float _w, float _h, int _divsX, int _divsY, Color _col)
     {
         float _DIV_X = _w / _divsX;
         float _DIV_Y = _h / _divsY;
         float _DIV_X_PT = _DIV_X * 1.5f;
-        float _DIV_Y_PT = _DIV_Y * 1.5f;;
+        float _DIV_Y_PT = _DIV_Y * 1.5f; ;
 
         for (int x = 0; x <= _divsX; x++)
         {
@@ -624,7 +636,7 @@ public class GL_DRAW
         int _TOTAL_CELLS = _cells.Length;
         float _ACTIVE_AREA = _w * _gutterRatio;
         float _CELL_SIZE = _ACTIVE_AREA / _TOTAL_CELLS;
-        float _GUTTER_SIZE = (_w- _ACTIVE_AREA) / (_TOTAL_CELLS - 1);
+        float _GUTTER_SIZE = (_w - _ACTIVE_AREA) / (_TOTAL_CELLS - 1);
 
         for (int i = 0; i < _TOTAL_CELLS; i++)
         {

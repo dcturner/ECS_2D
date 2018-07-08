@@ -245,6 +245,20 @@ public class HUD
             GL_DRAW.Draw_LINE(_CURRENT, _y, _CURRENT, _y + (_h * _values[i]), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
         }
     }
+    public static void Draw_HISTOGRAM_POLY_X(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, bool _alphaFade, params float[] _values)
+    {
+        int _TOTAL_BINS = _values.Length;
+        float _DIV = _w / _TOTAL_BINS;
+
+
+        for (int i = 0; i < _TOTAL_BINS; i++)
+        {
+            float _CURRENT = _x + (_DIV * i);
+            float _BIN_VALUE = _values[i];
+            Color _COL = Color.Lerp(_col_MIN, _col_MAX, _BIN_VALUE);
+            GL_DRAW.Draw_LINE(_CURRENT, _y, _CURRENT, _y + (_h * _values[i]), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
+        }
+    }
     public static void Draw_HISTOGRAM_LINE_Y(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, bool _alphaFade, Histogram _histogram)
     {
         int _TOTAL_BINS = _histogram.binCount;
@@ -272,7 +286,8 @@ public class HUD
         }
     }
 
-    public static void Draw_HISTOGRAM_RADIAL(float[] _values, float _x, float _y, float _radius_start, float _radius_end, Color _col_MIN, Color _col_MAX, bool _alphaFade = false, float _angle_start = 0, float _angle_end = 1, float _rotation = 1){
+    public static void Draw_HISTOGRAM_RADIAL(float[] _values, float _x, float _y, float _radius_start, float _radius_end, Color _col_MIN, Color _col_MAX, bool _alphaFade = false, float _angle_start = 0, float _angle_end = 1, float _rotation = 1)
+    {
         GL.PushMatrix();
         GL_DRAW.TransformMatrix(_x, _y, _rotation);
         int _TOTAL_BINS = _values.Length;
@@ -287,7 +302,7 @@ public class HUD
             Vector2 _POS_START = GL_DRAW.PolarCoord(_CURRENT_ANGLE, _radius_start);
             Vector2 _POS_END = GL_DRAW.PolarCoord(_CURRENT_ANGLE, _radius_start + (_RANGE_RADIUS * _BIN_VALUE));
             Color _COL = Color.Lerp(_col_MIN, _col_MAX, _BIN_VALUE);
-            GL_DRAW.Draw_LINE(_POS_START.x, GL_DRAW.LockAspect_Y(_POS_START.y), _POS_END.x,GL_DRAW.LockAspect_Y(_POS_END.y), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
+            GL_DRAW.Draw_LINE(_POS_START.x, GL_DRAW.LockAspect_Y(_POS_START.y), _POS_END.x, GL_DRAW.LockAspect_Y(_POS_END.y), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
         }
         GL.PopMatrix();
     }

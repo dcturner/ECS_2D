@@ -18,7 +18,7 @@ public class UI_Core : MonoBehaviour
         _SPRAWL = new DataSprawl(30, 64, 10, 1, 30);
 
         wHist = new WINDOW_HISTOGRAMS(0.5f, 0.5f, 0.25f, 0.25f);
-        wHist.Init(_offsetA: 0.1f, _offsetB: 0.2f, _incrementA:0.01f, _incrementB:0.02f, _gutterRatio:1, _colour_A:3);
+        wHist.Init(_offsetA: 0.1f, _offsetB: 0.2f, _incrementA: 0.01f, _incrementB: 0.02f, _gutterRatio: 1, _colour_A: 3);
 
     }
     private void OnPostRender()
@@ -33,10 +33,13 @@ public class UI_Core : MonoBehaviour
 
         wHist.Set_X(_MX);
         wHist.Set_Y(_MY);
+        wHist.Set_W(1 - _MX);
+        wHist.Set_H(1 - _MY);
         wHist.Draw();
     }
 
-    void Update_HUD_Items(){
-        wHist.Update();   
+    void Update_HUD_Items()
+    {
+        wHist.Update();
     }
 }
