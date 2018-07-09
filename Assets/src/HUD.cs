@@ -232,7 +232,7 @@ public class HUD
             GL_DRAW.Draw_LINE(_CURRENT, _y, _CURRENT, _y + (_h * _histogram.Get_Value(i)), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
         }
     }
-    public static void Draw_HISTOGRAM_LINE_X(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, bool _alphaFade, params float[] _values)
+    public static void Draw_HISTOGRAM_LINE_X(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, params float[] _values)
     {
         int _TOTAL_BINS = _values.Length;
         float _DIV = _w / _TOTAL_BINS;
@@ -242,7 +242,7 @@ public class HUD
             float _CURRENT = _x + (_DIV * i);
             float _BIN_VALUE = _values[i];
             Color _COL = Color.Lerp(_col_MIN, _col_MAX, _BIN_VALUE);
-            GL_DRAW.Draw_LINE(_CURRENT, _y, _CURRENT, _y + (_h * _values[i]), (_alphaFade) ? COL.Set_alphaStrength(_COL, _BIN_VALUE) : _COL);
+            GL_DRAW.Draw_LINE(_CURRENT, _y, _CURRENT, _y + (_h * _values[i]), _COL);
         }
     }
     public static void Draw_HISTOGRAM_POLY(float _x, float _y, float _w, float _h, Color _col, params float[] _values)

@@ -65,7 +65,7 @@ public class WINDOW_HISTOGRAMS : WINDOW{
     // noise settings
     float rateA, rateB, offsetA, offsetB, incrementA, incrementB;
     // layout settings
-    float spacing_X, spacing_Y, min_WIDTH, max_WIDTH, min_HEIGHT, max_HEIGHT, gutterRatio;
+    GL_DRAW.GL_MATTRIX_TRANSFORM transform;
     float div_X, div_Y, div_WIDTH, div_HEIGHT;
     Color colour_A, colour_B;
 
@@ -88,12 +88,7 @@ public class WINDOW_HISTOGRAMS : WINDOW{
         float _incrementB = 0,
     
     // layout
-        float _spacingX = 0.01f,
-        float _spacingY = 0.01f,
-        float _min_WIDTH = 0.1f,
-        float _max_WIDTH = 1f,
-        float _min_HEIGHT = 0.1f,
-        float _max_HEIGHT = 0.5f,
+
         float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO,
 
         // colour
@@ -110,15 +105,6 @@ public class WINDOW_HISTOGRAMS : WINDOW{
         rateB = _rateB;
         offsetB = _offsetB;
         incrementB = _incrementB;
-
-        // layout settings
-        spacing_X = _spacingX;
-        spacing_Y = _spacingY;
-        min_WIDTH = _min_WIDTH;
-        max_WIDTH = _max_WIDTH;
-        min_HEIGHT = _min_HEIGHT;
-        max_HEIGHT = _max_HEIGHT;
-        gutterRatio = _gutterRatio;
 
         colour_A = GetColour(_colour_A);
         colour_B = GetColour(_colour_B);
@@ -145,10 +131,10 @@ public class WINDOW_HISTOGRAMS : WINDOW{
     {
      for (int i = 0; i < totalHistograms; i++)
         {
-            HUD.Draw_HISTOGRAM_BAR_X(
-                start_X + (i * div_X),
-                start_Y + (i * div_Y),
-                (min_WIDTH + (i * div_WIDTH)) * w, (min_HEIGHT + (i * div_HEIGHT)) * h, colour_A, colour_B, gutterRatio,false, histograms[i].values); 
+            //HUD.Draw_HISTOGRAM_POLY_FILL(
+                //start_X + (i * div_X),
+                //start_Y + (i * div_Y),
+                //(min_WIDTH + (i * div_WIDTH)) * w, (min_HEIGHT + (i * div_HEIGHT)) * h, colour_A, colour_B, gutterRatio,false, histograms[i].values); 
         }   
     }
 }

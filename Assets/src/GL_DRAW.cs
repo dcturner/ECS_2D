@@ -6,7 +6,7 @@ public class GL_DRAW
 {
 
     public static float PI2 = Mathf.PI * 2.0f;
-    static float Z = 0f;
+    static float Z = 0;
     public struct Vert
     {
         public float x, y;
@@ -18,15 +18,26 @@ public class GL_DRAW
             c = _col;
         }
     }
+    public struct GL_MATTRIX_TRANSFORM
+    {
+        public float x, y, z, rotX, rotY, rotZ, sclX, sclY, sclZ;
+        public GL_MATTRIX_TRANSFORM(
+            float _x = 0, float _y = 0, float _z = 0,
+            float _rotX = 0, float _rotY = 0, float _rotZ = 0,
+            float _sclX = 1, float _sclY = 1, float _sclZ = 1)
+        {
+            x = _x;
+            y = _y;
+            z = _z;
+            rotX = _rotX;
+            rotY = _rotY;
+            rotZ = _rotZ;
+            sclX = _sclX;
+            sclY = _sclY;
+            sclZ = _sclZ;
+        }
+    }
 
-    public static float ScreenX(float _x)
-    {
-        return Screen.width * _x;
-    }
-    public static float ScreenY(float _y)
-    {
-        return Screen.height * _y;
-    }
     public static float LockAspect_Y(float _y)
     {
         return _y * ((float)Screen.width / Screen.height);
@@ -48,6 +59,12 @@ public class GL_DRAW
         float _Y = Mathf.Cos(_theta) * _radius;
         return new Vector2(_X, _Y);
     }
+    public static Vector2 PolarCoord_1to1(float _theta, float _radius)
+    {
+        float _X = Mathf.Sin(_theta) * _radius;
+        float _Y = Mathf.Cos(_theta) * _radius;
+        return new Vector2(_X, LockAspect_Y(_Y));
+    }
     public static Vector2 PolarCoord2(float _theta, float _radiusX, float _radiusY)
     {
         float _X = Mathf.Sin(_theta) * _radiusX;
@@ -55,33 +72,103 @@ public class GL_DRAW
         return new Vector2(_X, _Y);
     }
 
-    public static void TransformMatrix(float _x, float _y, float _rotation = 0, float _scaleX = 1, float _scaleY = 1)
+    public static void TransformMatrix(float _x, float _y, float _rotationX = 0, float _rotationY = 0,float _rotationZ = 0, float _scaleX = 1, float _scaleY = 1, float _scaleZ = 1)
     {
         Matrix4x4 model = GL.modelview;
-        Matrix4x4 m = Matrix4x4.TRS(new Vector3(ScreenX(_x), ScreenY(_y), Z), Quaternion.Euler(0, 0, _rotation * 360f), new Vector3(_scaleX, _scaleY, 1));
+        Matrix4x4 m = Matrix4x4.TRS(new Vector3(_x, _y, Z), Quaternion.Euler(_rotationX * 360f, _rotationY * 360f, _rotationZ * 360f), new Vector3(_scaleX, _scaleY, _scaleZ));
 
         GL.MultMatrix(m * model);
+    }
+    public static void TransformMatrix(GL_MATTRIX_TRANSFORM _t)
+    {
+        Matrix4x4 model = GL.modelview;
+        Matrix4x4 m = Matrix4x4.TRS(new Vector3(_t.x, _t.y, _t.z), Quaternion.Euler(_t.rotX * 360f, _t.rotY* 360f, _t.rotZ* 360f), new Vector3(_t.sclX, _t.sclY, _t.sclZ));
+
+        GL.MultMatrix(m * model);
+    }
+    public static void Rotate(float _angle){
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_rotZ: _angle);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void RotateX(float _angle)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_rotX: _angle);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void RotateY(float _angle)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_rotY: _angle);
+        TransformMatrix(_TRANSFORM);
+    }
+
+    // TRANSLATE POSITION
+    public static void TranslateX(float _value)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_x: _value);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void TranslateY(float _value)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_y: _value);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void TranslateZ(float _value)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_z: _value);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void Translate(float _x, float _y, float _z = 0)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_x:_x, _y:_y, _z:_z);
+        TransformMatrix(_TRANSFORM);
+    }
+
+    // SCALE
+    public static void ScaleX(float _value)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_sclX: _value);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void ScaleY(float _value)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_sclY: _value);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void ScaleZ(float _value)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_sclZ: _value);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void Scale(float _x, float _y, float _z = 1)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_sclX: _x, _sclY: _y, _sclZ: _z);
+        TransformMatrix(_TRANSFORM);
+    }
+    public static void Scale(float _value)
+    {
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_sclX: _value, _sclY: _value, _sclZ: _value);
+        TransformMatrix(_TRANSFORM);
     }
 
     public static void Add_VERT(float _x, float _y, Color _col)
     {
         GL.Color(_col);
-        GL.Vertex3(ScreenX(_x), ScreenY(_y), Z);
+        GL.Vertex3(_x, _y, Z);
     }
     public static void Add_VERT(Vert _v)
     {
         GL.Color(_v.c);
-        GL.Vertex3(ScreenX(_v.x), ScreenY(_v.y), Z);
+        GL.Vertex3(_v.x, _v.y, Z);
     }
     public static void Add_VERT_1to1(float _x, float _y, Color _col)
     {
         GL.Color(_col);
-        GL.Vertex3(ScreenX(_x), ScreenX(_y), Z);
+        GL.Vertex3(_x, _y, Z);
     }
     public static void Add_VERT_1to1(Vert _v)
     {
         GL.Color(_v.c);
-        GL.Vertex3(ScreenX(_v.x), ScreenX(_v.y), Z);
+        GL.Vertex3(_v.x, _v.y, Z);
     }
 
     public static void Draw_LINE(float _startX, float _startY, float _endX, float _endY, Color _col_start, Color _col_end)
@@ -277,7 +364,7 @@ public class GL_DRAW
     {
         Draw_ARC_FILL(_sides + 1, _x, _y, 0f, 1f, 0f, _size, _col, _rotation);
     }
-    public static void Draw_ELLIPSE(int _segments, float _x, float _y, float _w, float _h, Color[] _colour)
+    public static void Draw_ELLIPSE_LINE(int _segments, float _x, float _y, float _w, float _h, Color _col)
     {
 
 
@@ -285,17 +372,26 @@ public class GL_DRAW
         float _DIV = (Mathf.PI * 2) / _segments;
         Vector2 _START = PolarCoord2(0, _w, _h);
 
-        Add_VERT(_START.x + _x, _START.y + _y, _colour[0]);
+        Add_VERT(_START.x + _x, _START.y + _y, _col);
         for (int i = 1; i < _segments; i++)
         {
             Vector2 _POLAR = PolarCoord2(i * _DIV, _w, _h);
-            Add_VERT(_POLAR.x + _x, _POLAR.y + _y, _colour[i % _colour.Length]);
+            Add_VERT(_POLAR.x + _x, _POLAR.y + _y, _col);
         }
-        Add_VERT(_START.x + _x, _START.y + _y, _colour[0]);
+        Add_VERT(_START.x + _x, _START.y + _y, _col);
         GL.End();
     }
+    public static void Draw_ELLIPSE_DOTTED(int _segments, float _x, float _y, float _w, float _h, Color _col)
+    {
+        float _DIV = (Mathf.PI * 2) / _segments;
+        for (int i = 0; i < _segments; i++)
+        {
+            Vector2 _POLAR = PolarCoord2(i * _DIV, _w, _h);
+            DRAW_POINT(_x + _POLAR.x, _y + _POLAR.y, _col);
+        }
+    }
 
-    public static void Draw_ELLIPSE_FILL(int _segments, float _x, float _y, float _w, float _h, Color[] _colour)
+    public static void Draw_ELLIPSE_FILL(int _segments, float _x, float _y, float _w, float _h, Color _col)
     {
 
         float _DIV = (Mathf.PI * 2) / _segments;
@@ -306,12 +402,56 @@ public class GL_DRAW
             Vector2 _V1 = PolarCoord2(i * _DIV, _w, _h);
             Vector2 _V2 = PolarCoord2((i + 1) * _DIV, _w, _h);
             GL.Begin(GL.TRIANGLES);
-            Add_VERT(_V1.x + _x, _V1.y + _y, _colour[i % _colour.Length]);
-            Add_VERT(_V2.x + _x, _V2.y + _y, _colour[i % _colour.Length]);
-            Add_VERT(_x, _y, _colour[i % _colour.Length]);
+            Add_VERT(_V1.x + _x, _V1.y + _y, _col);
+            Add_VERT(_V2.x + _x, _V2.y + _y, _col);
+            Add_VERT(_x, _y, _col);
             GL.End();
         }
     }
+    public static void Draw_CIRCLE_LINE(int _segments, float _x, float _y, float _radius, Color _col)
+    {
+
+
+        GL.Begin(GL.LINE_STRIP);
+        float _DIV = (Mathf.PI * 2) / _segments;
+        Vector2 _START = PolarCoord_1to1(0, _radius);
+
+        Add_VERT(_START.x + _x, _START.y + _y, _col);
+        for (int i = 1; i < _segments; i++)
+        {
+            Vector2 _POLAR = PolarCoord_1to1(i * _DIV, _radius);
+            Add_VERT(_POLAR.x + _x, _POLAR.y + _y, _col);
+        }
+        Add_VERT(_START.x + _x, _START.y + _y, _col);
+        GL.End();
+    }
+    public static void Draw_CIRCLE_DOTTED(int _segments, float _x, float _y, float _radius, Color _col)
+    {
+        float _DIV = (Mathf.PI * 2) / _segments;
+        for (int i = 0; i < _segments; i++)
+        {
+            Vector2 _POLAR = PolarCoord_1to1(i * _DIV, _radius);
+            DRAW_POINT(_x + _POLAR.x, _y + _POLAR.y, _col);
+        }
+    }
+
+    public static void Draw_CIRCLE_FILL(int _segments, float _x, float _y, float _radius, Color _col)
+    {
+
+        float _DIV = (Mathf.PI * 2) / _segments;
+
+        for (int i = 0; i < _segments; i++)
+        {
+            Vector2 _V1 = PolarCoord_1to1(i * _DIV, _radius);
+            Vector2 _V2 = PolarCoord_1to1((i + 1) * _DIV, _radius);
+            GL.Begin(GL.TRIANGLES);
+            Add_VERT(_V1.x + _x, _V1.y + _y, _col);
+            Add_VERT(_V2.x + _x, _V2.y + _y, _col);
+            Add_VERT(_x, _y, _col);
+            GL.End();
+        }
+    }
+
 
     public static void Draw_ARC(int _segments, float _x, float _y, float _start, float _end, float _radius_start, float _radius_end, Color _col, float _rotation = 0)
     {
