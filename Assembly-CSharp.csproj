@@ -65,6 +65,9 @@
     <Compile Include="Assets\src\GL_DRAW.cs" />
     <Compile Include="Assets\src\GL_TXT.cs" />
     <Compile Include="Assets\src\HUD.cs" />
+    <Compile Include="Assets\src\presentation\ECS_PREZ_SCREENS.cs" />
+    <Compile Include="Assets\src\presentation\PRESENTATION.cs" />
+    <Compile Include="Assets\src\presentation\SCREEN.cs" />
     <Compile Include="Assets\src\Spring.cs" />
     <Compile Include="Assets\src\UI_Core.cs" />
     <Compile Include="Assets\src\WINDOW.cs" />
