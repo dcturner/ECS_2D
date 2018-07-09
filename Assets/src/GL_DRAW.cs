@@ -18,13 +18,13 @@ public class GL_DRAW
             c = _col;
         }
     }
-    public struct GL_MATTRIX_TRANSFORM
+    public class GL_MATTRIX_TRANSFORM
     {
         public float x, y, z, rotX, rotY, rotZ, sclX, sclY, sclZ;
         public GL_MATTRIX_TRANSFORM(
             float _x = 0, float _y = 0, float _z = 0,
             float _rotX = 0, float _rotY = 0, float _rotZ = 0,
-            float _sclX = 1, float _sclY = 1, float _sclZ = 1)
+            float _sclX = 1f, float _sclY = 1f, float _sclZ = 1f)
         {
             x = _x;
             y = _y;
@@ -82,7 +82,7 @@ public class GL_DRAW
     public static void TransformMatrix(GL_MATTRIX_TRANSFORM _t)
     {
         Matrix4x4 model = GL.modelview;
-        Matrix4x4 m = Matrix4x4.TRS(new Vector3(_t.x, _t.y, _t.z), Quaternion.Euler(_t.rotX * 360f, _t.rotY* 360f, _t.rotZ* 360f), new Vector3(_t.sclX, _t.sclY, _t.sclZ));
+        Matrix4x4 m = Matrix4x4.TRS(new Vector3(_t.x, _t.y, _t.z), Quaternion.Euler(_t.rotX * 360f, _t.rotY* 360f, _t.rotZ* 360f), new Vector3(_t.sclX,_t.sclY,_t.sclZ));
 
         GL.MultMatrix(m * model);
     }
@@ -148,6 +148,21 @@ public class GL_DRAW
     {
         GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_sclX: _value, _sclY: _value, _sclZ: _value);
         TransformMatrix(_TRANSFORM);
+    }
+
+    public static void TransformLerp(GL_MATTRIX_TRANSFORM _A, GL_MATTRIX_TRANSFORM _B, float _value){
+        float _X = Mathf.Lerp(_A.x, _B.x, _value);
+        float _Y = Mathf.Lerp(_A.y, _B.y, _value);
+        float _Z = Mathf.Lerp(_A.z, _B.z, _value);
+
+        float _ROT_X = Mathf.Lerp(_A.rotX, _B.rotX, _value);
+        float _ROT_Y = Mathf.Lerp(_A.rotY, _B.rotY, _value);
+        float _ROT_Z = Mathf.Lerp(_A.rotZ, _B.rotZ, _value);
+
+        float _SCL_X = Mathf.Lerp(_A.sclX, _B.sclX, _value);
+        float _SCL_Y = Mathf.Lerp(_A.sclY, _B.sclY, _value);
+        float _SCL_Z = Mathf.Lerp(_A.sclZ, _B.sclZ, _value);
+        TransformMatrix(new GL_MATTRIX_TRANSFORM(_X, _Y, _Z, _ROT_X, _ROT_Y, _ROT_Z, _SCL_X, _SCL_Y, _SCL_Z));
     }
 
     public static void Add_VERT(float _x, float _y, Color _col)

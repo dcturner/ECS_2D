@@ -4,43 +4,51 @@ using UnityEngine;
 using COLOUR;
 using DATA;
 
-public class WINDOW {
+public class WINDOW
+{
     public const float DEFAULT_CONTENT_PADDING_X = 0.1f;
     public const float DEFAULT_CONTENT_PADDING_Y = 0.1f;
     public float x, y, w, h;
+    public GL_DRAW.GL_MATTRIX_TRANSFORM transform;
     public float pad_X, pad_Y, start_X, start_Y, active_X, active_Y;
     public Palette palette;
 
-    public WINDOW(float _x = 0, float _y = 0, float _w = 1, float _h = 1){
-        pad_X = DEFAULT_CONTENT_PADDING_X;
-        pad_Y = DEFAULT_CONTENT_PADDING_X;
+    public WINDOW(float _x = 0, float _y = 0, float _w = 1, float _h = 1, float _padX = DEFAULT_CONTENT_PADDING_X, float _padY = DEFAULT_CONTENT_PADDING_Y)
+    {
+        pad_X = pad_X = _padX;
+        pad_Y = _padY;
+        transform = new GL_DRAW.GL_MATTRIX_TRANSFORM();
         Set_X(_x);
         Set_Y(_y);
         Set_W(_w);
         Set_H(_h);
         Set_Palette(0);
     }
-    public void Set_Palette(int _index){
+    public void Set_Palette(int _index)
+    {
         palette = COL.Get_Palette(_index);
     }
-    public Color GetColour(int _colourIndex){
+    public Color GetColour(int _colourIndex)
+    {
         return palette.Get(_colourIndex);
     }
-    public virtual void Update(){
-        
+    public virtual void Update()
+    {
+
     }
-    public virtual void Draw(){
-        
+    public virtual void Draw()
+    {
+        GL_DRAW.TransformMatrix(transform);
     }
 
-    public void Set_X(float _x){
-        
-        x = _x;
+    public void Set_X(float _x)
+    {
+        x = transform.x = _x;
         start_X = x + (w * pad_X);
     }
     public void Set_Y(float _y)
     {
-        y = _y;
+        y = transform.y = _y;
         start_Y = y + (h * pad_Y);
     }
     public void Set_W(float _w)
@@ -55,22 +63,23 @@ public class WINDOW {
     }
 }
 
-public class WINDOW_HEADER{
+public class WINDOW_HEADER
+{
 }
 
-public class WINDOW_HISTOGRAMS : WINDOW{
+public class WINDOW_HISTOGRAMS : WINDOW
+{
 
     public Histogram[] histograms;
     public int totalHistograms;
     // noise settings
     float rateA, rateB, offsetA, offsetB, incrementA, incrementB;
     // layout settings
-    GL_DRAW.GL_MATTRIX_TRANSFORM transform;
-    float div_X, div_Y, div_WIDTH, div_HEIGHT;
+    public GL_DRAW.GL_MATTRIX_TRANSFORM transform_start, transform_end;
     Color colour_A, colour_B;
 
-    public WINDOW_HISTOGRAMS(float _x = 0, float _y = 0, float _w = 1, float _h = 1):base(_x, _y, _w, _h){
-        
+    public WINDOW_HISTOGRAMS(float _x = 0, float _y = 0, float _w = 1, float _h = 1, float _padX = DEFAULT_CONTENT_PADDING_X, float _padY = DEFAULT_CONTENT_PADDING_Y) : base(_x, _y, _w, _h, _padX, _padY)
+    {
     }
 
     public void Init(
@@ -81,22 +90,22 @@ public class WINDOW_HISTOGRAMS : WINDOW{
         // noise Settings
         float _rateA = 1,
         float _rateB = 1,
-        float _startingOffset = 0.1f,
-        float _offsetA = 0,
-        float _offsetB = 0,
-        float _incrementA = 0,
-        float _incrementB = 0,
-    
-    // layout
-
-        float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO,
+        float _offsetA = 0.1f,
+        float _offsetB = 0.05f,
+        float _incrementA = 0.01f,
+        float _incrementB = 0.005f,
 
         // colour
         int _colour_A = 0,
         int _colour_B = 0
-    ){
+    )
+    {
 
         totalHistograms = _totalHistograms;
+
+        // layout
+        transform_start = new GL_DRAW.GL_MATTRIX_TRANSFORM();
+        transform_end = new GL_DRAW.GL_MATTRIX_TRANSFORM();
 
         // noise settings
         rateA = _rateA;
@@ -118,23 +127,21 @@ public class WINDOW_HISTOGRAMS : WINDOW{
 
     public override void Update()
     {
-        div_X = active_X / totalHistograms;
-        div_Y = active_Y / totalHistograms;
-
         for (int i = 0; i < totalHistograms; i++)
         {
-            histograms[i].UpdateNoise(rateA, offsetA*i, incrementA, rateB, offsetB*i, incrementB);
+            histograms[i].UpdateNoise(rateA, offsetA * i, incrementA, rateB, offsetB * i, incrementB);
         }
     }
 
     public override void Draw()
     {
-     for (int i = 0; i < totalHistograms; i++)
+        base.Draw();
+        for (int i = 0; i < totalHistograms; i++)
         {
-            //HUD.Draw_HISTOGRAM_POLY_FILL(
-                //start_X + (i * div_X),
-                //start_Y + (i * div_Y),
-                //(min_WIDTH + (i * div_WIDTH)) * w, (min_HEIGHT + (i * div_HEIGHT)) * h, colour_A, colour_B, gutterRatio,false, histograms[i].values); 
-        }   
+            GL.PushMatrix();
+            GL_DRAW.TransformLerp(transform_start, transform_end, (float)i / totalHistograms);
+            HUD.Draw_HISTOGRAM_POLY_FILL(0.1f, 0.1f-(i*0.01f), 0.5f, 0.1f, colour_A, colour_B, histograms[i].values);
+            GL.PopMatrix();
+        }
     }
 }
