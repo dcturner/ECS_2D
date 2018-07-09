@@ -140,7 +140,8 @@ public class WINDOW_HISTOGRAMS : WINDOW
         {
             GL.PushMatrix();
             GL_DRAW.TransformLerp(transform_start, transform_end, (float)i / totalHistograms);
-            HUD.Draw_HISTOGRAM_POLY_FILL(0.1f, 0.1f-(i*0.01f), 0.5f, 0.1f, colour_A, colour_B, histograms[i].values);
+            HUD.Draw_HISTOGRAM_POLY_FILL(0f, 0f, 0.5f, 0.2f, colour_A, colour_B, histograms[i].values);
+            //GL_DRAW.Draw_LINE(0f, 0f, 0.1f, 0f, Color.cyan);
             GL.PopMatrix();
         }
     }

@@ -232,12 +232,12 @@ namespace DATA
             }
             return _RESULT;
         }
-        public static float[] RandomValues_NOISE_TIME(int _count, float _rateA = 1, float _rateB = 1.1f, float _offsetA = 0.01f, float _offsetB = 0.05f)
+        public static float[] RandomValues_NOISE_TIME(int _count, float _rateA = 1, float _rateB = 1.1f, float _offsetA = 0.01f, float _offsetB = 0.025f, float _incrementA = 0.025f, float _incrementB = 0.01f)
         {
             float[] _RESULT = new float[_count];
             for (int i = 0; i < _count; i++)
             {
-                _RESULT[i] = Anim.PNoise(_rateA, _rateB, _offsetA * i, _offsetB * i);
+                _RESULT[i] = Anim.PNoise(_rateA, _rateB, _offsetA * i, _offsetB * i, _incrementA * i, _incrementB * i);
             }
             return _RESULT;
         }

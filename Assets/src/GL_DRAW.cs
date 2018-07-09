@@ -7,6 +7,18 @@ public class GL_DRAW
 
     public static float PI2 = Mathf.PI * 2.0f;
     static float Z = 0;
+    public static float SKEW_X = 0f;
+    public static float SKEW_Y = 0f;
+    public static void RESET_SKEW(){
+        SKEW_X = 0f;
+        SKEW_Y = 0f;
+    }
+    public static void SKEW(float _x = 0, float _y = 0)
+    {
+        SKEW_X = _x;
+        SKEW_Y = _y;
+    }
+
     public struct Vert
     {
         public float x, y;
@@ -164,26 +176,25 @@ public class GL_DRAW
         float _SCL_Z = Mathf.Lerp(_A.sclZ, _B.sclZ, _value);
         TransformMatrix(new GL_MATTRIX_TRANSFORM(_X, _Y, _Z, _ROT_X, _ROT_Y, _ROT_Z, _SCL_X, _SCL_Y, _SCL_Z));
     }
-
     public static void Add_VERT(float _x, float _y, Color _col)
     {
         GL.Color(_col);
-        GL.Vertex3(_x, _y, Z);
+        GL.Vertex3( _x + (_y * SKEW_Y), _y + (_x * SKEW_X), Z);
     }
     public static void Add_VERT(Vert _v)
     {
         GL.Color(_v.c);
-        GL.Vertex3(_v.x, _v.y, Z);
+        GL.Vertex3(_v.x + (_v.y * SKEW_Y), _v.y + (_v.x * SKEW_X), Z);
     }
     public static void Add_VERT_1to1(float _x, float _y, Color _col)
     {
         GL.Color(_col);
-        GL.Vertex3(_x, _y, Z);
+        GL.Vertex3(_x+ (_y * SKEW_Y), _y + (_x *SKEW_X), Z);
     }
     public static void Add_VERT_1to1(Vert _v)
     {
         GL.Color(_v.c);
-        GL.Vertex3(_v.x, _v.y, Z);
+        GL.Vertex3(_v.x+ (_v.y * SKEW_Y), _v.y * SKEW_Y, Z);
     }
 
     public static void Draw_LINE(float _startX, float _startY, float _endX, float _endY, Color _col_start, Color _col_end)
@@ -204,6 +215,14 @@ public class GL_DRAW
     public static void Draw_BG(Color _topLeft, Color _topRight, Color _bottomRight, Color _bottomLeft)
     {
         Draw_GRADIENT_RECT_4(0, 0, 1, 1, _topLeft, _topRight, _bottomRight, _bottomLeft);
+    }
+    public static void Draw_BG_X(Color _left, Color _right)
+    {
+        Draw_GRADIENT_RECT_4(0, 0, 1, 1, _left, _right, _right, _left);
+    }
+    public static void Draw_BG_Y(Color _top, Color _btm)
+    {
+        Draw_GRADIENT_RECT_4(0, 0, 1, 1, _top, _top, _btm, _btm);
     }
     public static void Draw_GRADIENT_RECT_4(float _x, float _y, float _w, float _h, Color _topLeft, Color _topRight, Color _bottomRight, Color _bottomLeft)
     {
