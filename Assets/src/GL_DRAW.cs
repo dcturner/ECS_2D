@@ -9,7 +9,8 @@ public class GL_DRAW
     static float Z = 0;
     public static float SKEW_X = 0f;
     public static float SKEW_Y = 0f;
-    public static void RESET_SKEW(){
+    public static void RESET_SKEW()
+    {
         SKEW_X = 0f;
         SKEW_Y = 0f;
     }
@@ -84,7 +85,7 @@ public class GL_DRAW
         return new Vector2(_X, _Y);
     }
 
-    public static void TransformMatrix(float _x, float _y, float _rotationX = 0, float _rotationY = 0,float _rotationZ = 0, float _scaleX = 1, float _scaleY = 1, float _scaleZ = 1)
+    public static void TransformMatrix(float _x, float _y, float _rotationX = 0, float _rotationY = 0, float _rotationZ = 0, float _scaleX = 1, float _scaleY = 1, float _scaleZ = 1)
     {
         Matrix4x4 model = GL.modelview;
         Matrix4x4 m = Matrix4x4.TRS(new Vector3(_x, _y, Z), Quaternion.Euler(_rotationX * 360f, _rotationY * 360f, _rotationZ * 360f), new Vector3(_scaleX, _scaleY, _scaleZ));
@@ -94,11 +95,12 @@ public class GL_DRAW
     public static void TransformMatrix(GL_MATTRIX_TRANSFORM _t)
     {
         Matrix4x4 model = GL.modelview;
-        Matrix4x4 m = Matrix4x4.TRS(new Vector3(_t.x, _t.y, _t.z), Quaternion.Euler(_t.rotX * 360f, _t.rotY* 360f, _t.rotZ* 360f), new Vector3(_t.sclX,_t.sclY,_t.sclZ));
+        Matrix4x4 m = Matrix4x4.TRS(new Vector3(_t.x, _t.y, _t.z), Quaternion.Euler(_t.rotX * 360f, _t.rotY * 360f, _t.rotZ * 360f), new Vector3(_t.sclX, _t.sclY, _t.sclZ));
 
         GL.MultMatrix(m * model);
     }
-    public static void Rotate(float _angle){
+    public static void Rotate(float _angle)
+    {
         GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_rotZ: _angle);
         TransformMatrix(_TRANSFORM);
     }
@@ -131,7 +133,7 @@ public class GL_DRAW
     }
     public static void Translate(float _x, float _y, float _z = 0)
     {
-        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_x:_x, _y:_y, _z:_z);
+        GL_MATTRIX_TRANSFORM _TRANSFORM = new GL_MATTRIX_TRANSFORM(_x: _x, _y: _y, _z: _z);
         TransformMatrix(_TRANSFORM);
     }
 
@@ -162,7 +164,8 @@ public class GL_DRAW
         TransformMatrix(_TRANSFORM);
     }
 
-    public static void TransformLerp(GL_MATTRIX_TRANSFORM _A, GL_MATTRIX_TRANSFORM _B, float _value){
+    public static void TransformLerp(GL_MATTRIX_TRANSFORM _A, GL_MATTRIX_TRANSFORM _B, float _value)
+    {
         float _X = Mathf.Lerp(_A.x, _B.x, _value);
         float _Y = Mathf.Lerp(_A.y, _B.y, _value);
         float _Z = Mathf.Lerp(_A.z, _B.z, _value);
@@ -179,7 +182,7 @@ public class GL_DRAW
     public static void Add_VERT(float _x, float _y, Color _col)
     {
         GL.Color(_col);
-        GL.Vertex3( _x + (_y * SKEW_Y), _y + (_x * SKEW_X), Z);
+        GL.Vertex3(_x + (_y * SKEW_Y), _y + (_x * SKEW_X), Z);
     }
     public static void Add_VERT(Vert _v)
     {
@@ -189,12 +192,12 @@ public class GL_DRAW
     public static void Add_VERT_1to1(float _x, float _y, Color _col)
     {
         GL.Color(_col);
-        GL.Vertex3(_x+ (_y * SKEW_Y), _y + (_x *SKEW_X), Z);
+        GL.Vertex3(_x + (_y * SKEW_Y), _y + (_x * SKEW_X), Z);
     }
     public static void Add_VERT_1to1(Vert _v)
     {
         GL.Color(_v.c);
-        GL.Vertex3(_v.x+ (_v.y * SKEW_Y), _v.y * SKEW_Y, Z);
+        GL.Vertex3(_v.x + (_v.y * SKEW_Y), _v.y * SKEW_Y, Z);
     }
 
     public static void Draw_LINE(float _startX, float _startY, float _endX, float _endY, Color _col_start, Color _col_end)
@@ -211,6 +214,10 @@ public class GL_DRAW
     public static void DRAW_POINT(float _x, float _y, Color _col)
     {
         Draw_LINE(_x, _y, _x + 0.001f, _y + 0.001f, _col);
+    }
+    public static void Draw_BG(Color _col)
+    {
+        Draw_RECT_FILL(0, 0, 1, 1, _col);
     }
     public static void Draw_BG(Color _topLeft, Color _topRight, Color _bottomRight, Color _bottomLeft)
     {
@@ -357,7 +364,8 @@ public class GL_DRAW
 
         GL.End();
     }
-    public static void Draw_QUAD(Vert _a, Vert _b, Vert _c, Vert _d){
+    public static void Draw_QUAD(Vert _a, Vert _b, Vert _c, Vert _d)
+    {
         GL.Begin(GL.QUADS);
 
         Add_VERT(_a);

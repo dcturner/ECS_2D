@@ -26,19 +26,19 @@ namespace DATA
         {
             return values[_binIndex];
         }
-        public void UpdateNoise(float _rateA=1, float _offsetA=0,float _incrementA = 0f, float _rateB=1, float _offsetB=0, float _incrementB = 0)
+        public void UpdateNoise(float _rateA = 1, float _offsetA = 0, float _incrementA = 0f, float _rateB = 1, float _offsetB = 0, float _incrementB = 0)
         {
             for (int i = 0; i < binCount; i++)
             {
                 Set_Value(i, Anim.PNoise(
                     // A
                     _rateA: _rateA,
-                    _offsetA: _offsetA*i,
-                    _incrementA: _incrementA*i,
+                    _offsetA: _offsetA * i,
+                    _incrementA: _incrementA * i,
                     // B
                     _rateB: _rateB,
-                    _offsetB: _offsetB*i,
-                    _incrementB: _incrementB*i
+                    _offsetB: _offsetB * i,
+                    _incrementB: _incrementB * i
                 ));
             }
         }
@@ -71,11 +71,11 @@ namespace DATA
         {
             return values[_index];
         }
-        public void UpdateNoise(float _rateA, float _offsetA, float _rateB, float _offsetB)
+        public void UpdateNoise(float _rateA = 1.1f, float _offsetA = 0.5f, float _rateB = 1.2f, float _offsetB = 0.75f)
         {
             for (int i = 0; i < binCount; i++)
             {
-                Set_Value(i, Anim.PNoise(_rateA, _offsetA, _rateB, _offsetB));
+                Set_Value(i, Anim.PNoise(_rateA, _rateB, _offsetA * i, _offsetB * i));
             }
         }
     }
@@ -116,7 +116,7 @@ namespace DATA
         List<BitArray> rows;
         int rowLength, totalRows, totalCells, currentRow, currentCell, timer_writeCell, currentFrame, minDuration, maxDuration, framesPerTick, cellRate;
         float durationFactor_MIN, durationFactor_MAX;
-        public DataSprawl(int _totalRows, int _rowLength,int _framesPerTick = 2, int _cellRate = 1, float _durationFactor_MIN = 1f, float _durationFactor_MAX = 3f)
+        public DataSprawl(int _totalRows, int _rowLength, int _framesPerTick = 2, int _cellRate = 1, float _durationFactor_MIN = 1f, float _durationFactor_MAX = 3f)
         {
             totalRows = _totalRows;
             rowLength = _rowLength;
@@ -165,13 +165,15 @@ namespace DATA
                 _CELLS.Set(i, false);
             }
         }
-        void NextFrame(){
+        void NextFrame()
+        {
             currentFrame++;
             int _RAW_FRAME = Mathf.FloorToInt(currentFrame / (float)cellRate) % totalCells;
             currentCell = _RAW_FRAME % rowLength;
 
             int _TEST_NEW_ROW = Mathf.FloorToInt(_RAW_FRAME / (float)rowLength);
-            if(currentRow != _TEST_NEW_ROW){
+            if (currentRow != _TEST_NEW_ROW)
+            {
                 ClearRow((currentRow + 1) % totalRows);
                 currentRow = _TEST_NEW_ROW;
             }
@@ -188,7 +190,8 @@ namespace DATA
                 ResetTimer_WRITE();
             }
         }
-        public void Draw(float _x, float _y, float _w, float _h, Color _col, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO){
+        public void Draw(float _x, float _y, float _w, float _h, Color _col, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO)
+        {
             float _ACTIVE_AREA = _h * _gutterRatio;
             float _GUTTER = (_h - _ACTIVE_AREA) / ((totalRows - 1));
             float _ROW_HEIGHT = _ACTIVE_AREA / totalRows;
@@ -197,7 +200,7 @@ namespace DATA
             {
                 int _ROW_INDEX = ((currentRow + totalRows) - i) % totalRows;
                 BitArray _ROW_CELLS = rows[_ROW_INDEX];
-                GL_DRAW.Draw_RECT_CELLS(_x, _y + (i*_ROW_HEIGHT) + (i*_GUTTER),_w, _ROW_HEIGHT, _ROW_CELLS, Color.white,1);
+                GL_DRAW.Draw_RECT_CELLS(_x, _y + (i * _ROW_HEIGHT) + (i * _GUTTER), _w, _ROW_HEIGHT, _ROW_CELLS, Color.white, 1);
             }
         }
     }

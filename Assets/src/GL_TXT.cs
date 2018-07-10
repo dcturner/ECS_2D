@@ -101,6 +101,16 @@ public class GL_FONT_3x5
         glpyhs.Add('+', Set(new int[] { 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0 }));
         glpyhs.Add('=', Set(new int[] { 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0 }));
         glpyhs.Add('"', Set(new int[] { 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
+        glpyhs.Add('(', Set(new int[] { 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0 }));
+        glpyhs.Add(')', Set(new int[] { 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0 }));
+        glpyhs.Add('[', Set(new int[] { 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1 }));
+        glpyhs.Add(']', Set(new int[] { 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1 }));
+
+        // XX_ XXX _XX XXX XXX XXX 
+        // X_X X__ X__ _X_ X__ X_X 
+        // X_X XX_ _X_ _X_ X_X X_X 
+        // X_X X__ __X _X_ X_X X_X 
+        // XX_ XXX XX_ XXX XXX X_X 
     }
     private static BitArray Set(int[] _cells)
     {

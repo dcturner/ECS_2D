@@ -249,7 +249,7 @@ public class HUD
     {
         int _TOTAL_BINS = _values.Length;
         int _TOTAL_VERTS = (_TOTAL_BINS * 2);
-        float _DIV = _w / _TOTAL_BINS;
+        float _DIV = _w / (_TOTAL_BINS - 1);
 
         GL_DRAW.Vert[] _VERTS = new GL_DRAW.Vert[_TOTAL_VERTS];
 
@@ -262,7 +262,7 @@ public class HUD
             _VERTS[i] = new GL_DRAW.Vert(_CURRENT, _y + (_h * _BIN_VALUE), _col);
 
             // BTM VERT
-            _VERTS[(_TOTAL_VERTS-1) - i] = new GL_DRAW.Vert(_CURRENT, _y, _col);
+            _VERTS[(_TOTAL_VERTS - 1) - i] = new GL_DRAW.Vert(_CURRENT, _y, _col);
         }
         GL_DRAW.Draw_POLY_LINE_CLOSE(_VERTS);
     }
@@ -270,9 +270,9 @@ public class HUD
     {
         int _TOTAL_BINS = _values.Length;
         int _TOTAL_VERTS = (_TOTAL_BINS * 2);
-        float _DIV = _w / _TOTAL_BINS;
+        float _DIV = _w / (_TOTAL_BINS - 1);
 
-        GL_DRAW.Vert[] _VERTS = new GL_DRAW.Vert[_TOTAL_VERTS+1];
+        GL_DRAW.Vert[] _VERTS = new GL_DRAW.Vert[_TOTAL_VERTS + 1];
 
         for (int i = 0; i < _TOTAL_BINS; i++)
         {
@@ -288,9 +288,9 @@ public class HUD
         }
 
         // now draw the poly
-        for (int i = 0; i < _TOTAL_BINS-1; i++)
+        for (int i = 0; i < _TOTAL_BINS - 1; i++)
         {
-            GL_DRAW.Draw_QUAD(_VERTS[i], _VERTS[i + 1], _VERTS[_TOTAL_VERTS - (i+1)], _VERTS[_TOTAL_VERTS - i]);
+            GL_DRAW.Draw_QUAD(_VERTS[i], _VERTS[i + 1], _VERTS[_TOTAL_VERTS - (i + 1)], _VERTS[_TOTAL_VERTS - i]);
         }
     }
     public static void Draw_HISTOGRAM_LINE_Y(float _x, float _y, float _w, float _h, Color _col_MIN, Color _col_MAX, bool _alphaFade, Histogram _histogram)
