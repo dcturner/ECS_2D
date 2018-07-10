@@ -81,100 +81,62 @@ public class HUD
     #region < _PARTITIONS
 
 
-    public static void Draw_ARC_PARTITIONS(int _sides, float _x, float _y, float _radius, float _angleRange, float _thickness, float _gutterSize, float _rotation, params Partition[] _partitions)
+    public static void Draw_ARC_PARTITIONS(Partitions _partitions, int _sides, float _x, float _y, float _radius, float _thickness, float _angle_start = 0, float _angle_end = 1, float _rotation=0)
     {
-        int _TOTAL_PARTITIONS = _partitions.Length;
-        float _PARTITION_AREA = (_angleRange * Get_CombinedPartitionArea(_partitions)) - (_gutterSize * (_TOTAL_PARTITIONS - 1));
+
         float _RADIUS_END = _radius + _thickness;
+        float _angleRange = _angle_end - _angle_start;
 
-        float _CURRENT_ANGLE = 0;
-
-
-        for (int i = 0; i < _TOTAL_PARTITIONS; i++)
+        for (int i = 0; i < _partitions.count; i++)
         {
-            Partition _PARTITION = _partitions[i];
-            float _SHARE_AREA = _PARTITION_AREA * _PARTITION.share;
-            GL_DRAW.Draw_ARC(_sides, _x, _y, _CURRENT_ANGLE, _CURRENT_ANGLE + _SHARE_AREA, _radius, _RADIUS_END, _PARTITION.colour, _rotation);
-            _CURRENT_ANGLE += _gutterSize;
-            _CURRENT_ANGLE += _SHARE_AREA;
+            Partition _P = _partitions.Get(i);
+            float _ANGLE_START = _angleRange * _P.start;
+            GL_DRAW.Draw_ARC(_sides, _x, _y, _ANGLE_START, _ANGLE_START + (_angleRange * _P.share),_radius, _radius+_thickness, _P.colour, _rotation);
         }
     }
-    public static void Draw_ARC_PARTITIONS_FILL(int _sides, float _x, float _y, float _radius, float _angleRange, float _thickness, float _gutterSize, float _rotation, params Partition[] _partitions)
+    public static void Draw_ARC_PARTITIONS_FILL(Partitions _partitions, int _sides, float _x, float _y, float _radius, float _thickness, float _angle_start = 0, float _angle_end = 1, float _rotation = 0)
     {
-        int _TOTAL_PARTITIONS = _partitions.Length;
-        float _PARTITION_AREA = (_angleRange * Get_CombinedPartitionArea(_partitions)) - (_gutterSize * (_TOTAL_PARTITIONS - 1));
+
         float _RADIUS_END = _radius + _thickness;
+        float _angleRange = _angle_end - _angle_start;
 
-        float _CURRENT_ANGLE = 0;
-
-
-        for (int i = 0; i < _TOTAL_PARTITIONS; i++)
+        for (int i = 0; i < _partitions.count; i++)
         {
-            Partition _PARTITION = _partitions[i];
-            float _SHARE_AREA = _PARTITION_AREA * _PARTITION.share;
-            GL_DRAW.Draw_ARC_FILL(_sides, _x, _y, _CURRENT_ANGLE, _CURRENT_ANGLE + _SHARE_AREA, _radius, _RADIUS_END, _PARTITION.colour, _rotation);
-            _CURRENT_ANGLE += _gutterSize;
-            _CURRENT_ANGLE += _SHARE_AREA;
+            Partition _P = _partitions.Get(i);
+            float _ANGLE_START = _angleRange * _P.start;
+            GL_DRAW.Draw_ARC_FILL(_sides, _x, _y, _ANGLE_START, _ANGLE_START + (_angleRange * _P.share), _radius, _radius + _thickness, _P.colour, _rotation);
         }
     }
-    public static void Draw_BAR_PARTITIONS_X(float _x, float _y, float _w, float _h, float _gutterSize, params Partition[] _partitions)
+    public static void Draw_BAR_PARTITIONS_X(float _x, float _y, float _w, float _h, Partitions _partitions)
     {
-        int _TOTAL_PARTITIONS = _partitions.Length;
-        float _PARTITION_AREA = (_w * Get_CombinedPartitionArea(_partitions) - (_gutterSize * (_TOTAL_PARTITIONS - 1)));
-        float _CURRENT_X = 0;
-
-        for (int i = 0; i < _TOTAL_PARTITIONS; i++)
+        for (int i = 0; i < _partitions.count; i++)
         {
-            Partition _PARTITION = _partitions[i];
-            float _SHARE_AREA = _PARTITION_AREA * _PARTITION.share;
-            GL_DRAW.Draw_RECT(_x + _CURRENT_X, _y, _SHARE_AREA, _h, _PARTITION.colour);
-            _CURRENT_X += _gutterSize;
-            _CURRENT_X += _SHARE_AREA;
+            Partition _P = _partitions.Get(i);
+            GL_DRAW.Draw_RECT(_x + (_w * _P.start), _y, _w * _partitions.Get_Share(i), _h, _P.colour);
         }
     }
-    public static void Draw_BAR_PARTITIONS_Y(float _x, float _y, float _w, float _h, float _gutterSize, params Partition[] _partitions)
+    public static void Draw_BAR_PARTITIONS_Y(float _x, float _y, float _w, float _h, Partitions _partitions)
     {
-        int _TOTAL_PARTITIONS = _partitions.Length;
-        float _PARTITION_AREA = (_h * Get_CombinedPartitionArea(_partitions) - (_gutterSize * (_TOTAL_PARTITIONS - 1)));
-        float _CURRENT_Y = 0;
-
-        for (int i = 0; i < _TOTAL_PARTITIONS; i++)
+        for (int i = 0; i < _partitions.count; i++)
         {
-            Partition _PARTITION = _partitions[i];
-            float _SHARE_AREA = _PARTITION_AREA * _PARTITION.share;
-            GL_DRAW.Draw_RECT(_x, _y + _CURRENT_Y, _w, _SHARE_AREA, _PARTITION.colour);
-            _CURRENT_Y += _gutterSize;
-            _CURRENT_Y += _SHARE_AREA;
+            Partition _P = _partitions.Get(i);
+            GL_DRAW.Draw_RECT(_x, _y + (_h * _P.start), _w, _h * _partitions.Get_Share(i), _P.colour);
         }
     }
-    public static void Draw_BAR_PARTITIONS_FILL_X(float _x, float _y, float _w, float _h, float _gutterSize, params Partition[] _partitions)
+    public static void Draw_BAR_PARTITIONS_FILL_X(float _x, float _y, float _w, float _h, Partitions _partitions)
     {
-        int _TOTAL_PARTITIONS = _partitions.Length;
-        float _PARTITION_AREA = (_w * Get_CombinedPartitionArea(_partitions) - (_gutterSize * (_TOTAL_PARTITIONS - 1)));
-        float _CURRENT_X = 0;
-
-        for (int i = 0; i < _TOTAL_PARTITIONS; i++)
+        for (int i = 0; i < _partitions.count; i++)
         {
-            Partition _PARTITION = _partitions[i];
-            float _SHARE_AREA = _PARTITION_AREA * _PARTITION.share;
-            GL_DRAW.Draw_RECT_FILL(_x + _CURRENT_X, _y, _SHARE_AREA, _h, _PARTITION.colour);
-            _CURRENT_X += _gutterSize;
-            _CURRENT_X += _SHARE_AREA;
+            Partition _P = _partitions.Get(i);
+            GL_DRAW.Draw_RECT_FILL(_x + (_w * _P.start), _y, _w * _partitions.Get_Share(i), _h, _P.colour);
         }
     }
-    public static void Draw_BAR_PARTITIONS_FILL_Y(float _x, float _y, float _w, float _h, float _gutterSize, params Partition[] _partitions)
+    public static void Draw_BAR_PARTITIONS_FILL_Y(float _x, float _y, float _w, float _h, Partitions _partitions)
     {
-        int _TOTAL_PARTITIONS = _partitions.Length;
-        float _PARTITION_AREA = (_h * Get_CombinedPartitionArea(_partitions) - (_gutterSize * (_TOTAL_PARTITIONS - 1)));
-        float _CURRENT_Y = 0;
-
-        for (int i = 0; i < _TOTAL_PARTITIONS; i++)
+        for (int i = 0; i < _partitions.count; i++)
         {
-            Partition _PARTITION = _partitions[i];
-            float _SHARE_AREA = _PARTITION_AREA * _PARTITION.share;
-            GL_DRAW.Draw_RECT_FILL(_x, _y + _CURRENT_Y, _w, _SHARE_AREA, _PARTITION.colour);
-            _CURRENT_Y += _gutterSize;
-            _CURRENT_Y += _SHARE_AREA;
+            Partition _P = _partitions.Get(i);
+            GL_DRAW.Draw_RECT_FILL(_x, _y + (_h * _P.start), _w, _h * _partitions.Get_Share(i), _P.colour);
         }
     }
     public static float Get_CombinedPartitionArea(Partition[] _partitions)
@@ -202,7 +164,7 @@ public class HUD
         GL_DRAW.TransformMatrix(_x, _y, _rotation);
 
         GL_DRAW.Draw_LINE(0, 0, 0 + _size, 0, _col_line_START, _col_line_END);
-        GL_TXT.Txt("test", 0 + _size + _txt_margin, 0, _txt_height / 5, _col_txt);
+        GL_TXT.Txt(_str, 0 + _size + _txt_margin, 0, _txt_height / 5, _col_txt);
 
         GL.PopMatrix();
     }
@@ -212,7 +174,7 @@ public class HUD
         GL_DRAW.TransformMatrix(_x, _y, _rotation);
 
         GL_DRAW.Draw_LINE(0, 0, 0, _size, _col_line_START, _col_line_END);
-        GL_TXT.Txt("test", 0, _size + _txt_margin, _txt_height / 5, _col_txt);
+        GL_TXT.Txt(_str, 0, _size + _txt_margin, _txt_height / 5, _col_txt);
 
         GL.PopMatrix();
     }

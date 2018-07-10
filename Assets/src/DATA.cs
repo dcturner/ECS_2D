@@ -97,20 +97,146 @@ namespace DATA
             // draw points if required
         }
     }
-    public struct Partition
+    public class Partition
     {
-        public string name;
+        public int index;
+        public float start;
         public float share;
         public Color colour;
-        public Partition(string _name, float _share, Color _col)
+        public Partition(float _start, float _share, Color _col, int _index = 0)
         {
-            name = _name;
+            start = _start;
             share = _share;
             colour = _col;
+            index = _index;
+        }
+        public Partition(float _share)
+        {
+            share = _share;
+            start = 0;
+            colour = Color.red;
+            index = 0;
+        }
+
+    }
+    public class Partitions
+    {
+        public static Partition[] GetRandomPartitions(int _count)
+        {
+            Partition[] _list = new Partition[_count];
+            float used = 0;
+            for (int i = 0; i < _count; i++)
+            {
+                float share = Random.Range(0, 1f-used);
+                _list[i] = new Partition(share);
+                used += share;
+            }
+            // bloat a random partition to fill all space
+            float _leftOver = 1f - used;
+            Partition _RAND = _list[Mathf.FloorToInt(Random.Range(0, _count - 1))];
+            _RAND.share = _RAND.share + _leftOver;
+            return _list;
+        }
+
+        public Partition[] partitions;
+        public int count;
+        public float activeArea;
+        public float gutterRatio;
+        public float gutter;
+        public Partitions(float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO, params Partition[] _partitions){
+            Init(_gutterRatio, _partitions);
+        }
+        public Partitions(int  _count = 10, float _gutterRatio = HUD.DEFAULT_GUTTER_RATIO)
+        {
+            Init(_gutterRatio, GetRandomPartitions(_count));
+        }
+        void Init(float _gutterRatio, Partition[] _partitions){
+            gutterRatio = _gutterRatio;
+            partitions = _partitions;
+            count = partitions.Length;
+            activeArea = _gutterRatio;
+            float _START_COUNTER = 0;
+            gutter = ((1f / (count)) * gutterRatio) / (count - 1);
+            for (int i = 0; i < count; i++)
+            {
+                Partition _P = Get(i);
+                _P.index = i;
+                _P.start = _START_COUNTER + (i * gutter);
+                _START_COUNTER += _P.share;
+            }
+        }
+        public Partition Get(int _index){
+
+            return partitions[_index];
+        }
+        public void Set_Share(int _index, float _value){
+            Partition _P = Get(_index);
+            float _PREV_SHARE = _P.share;
+            float _DIFF = _PREV_SHARE - _value;
+            _P.share = Mathf.Clamp01(_value);
+            float _CHANGE_PER_PARTITION = (_DIFF / (count - 1));
+
+            float _SHARE_COUNT = 0;
+            for (int i = 0; i < count; i++)
+            {
+                Partition _TEMP_P = Get(i);
+
+                if(_TEMP_P != _P){
+                    _TEMP_P.share = Mathf.Clamp01(_TEMP_P.share += _CHANGE_PER_PARTITION);
+                }
+                _TEMP_P.start = _SHARE_COUNT + (i * gutter);
+                _SHARE_COUNT += _TEMP_P.share;
+            }
+        }
+        public void AddShare(int  _index, float _add){
+            Partition _P = Get(_index);
+            Set_Share(_index, _P.share + _add);
+        }
+        public void AddRandom(int _index, float _range=0.001f, float _rateA=1f, float _rateB=1.2f, float _offsetA=1f, float _offsetB=1.5f, float _incrementA=0.01f, float _incrementB=0.05f){
+            AddShare(_index, Anim.PNoise(_rateA, _rateB, _offsetA, _offsetB, _incrementA, _incrementB, -_range, _range));
+        }
+        public void AddRandom(float _range = 0.001f, float _rateA = 1f, float _rateB = 1.2f, float _offsetA = 1f, float _offsetB = 1.5f, float _incrementA = 0.01f, float _incrementB = 0.05f)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                AddShare(i, Anim.PNoise(_rateA, _rateB, _offsetA*i, _offsetB*i, _incrementA*i, _incrementB*i, -_range, _range));
+            }
+        }
+        public void Set_Start(int _index, float _value){
+            Get(_index).start =  _value + (_index * gutter);
+        }
+        public float Get_Start(int _index){
+            return partitions[_index].start;
+        }
+        public float Get_Share(int _index)
+        {
+            return partitions[_index].share * activeArea;
+        }
+        public Color Get_Colour(int _index)
+        {
+            return partitions[_index].colour;
+        }
+        public void Set_Colour(int _index, Color _col)
+        {
+            partitions[_index].colour = _col;
+        }
+        public void ColourSpread(Color _col_start, Color _col_end){
+            for (int i = 0; i < count; i++)
+            {
+                Set_Colour(i,Color.Lerp(_col_start, _col_end, (float)i / count));
+            }
+        }
+        public void ColourByShare(Color _col_start, Color _col_end)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                Partition _P = Get(i);
+                _P.colour = (Color.Lerp(_col_start, _col_end, _P.share));
+            }
         }
     }
 
-    public struct DataSprawl
+    public class DataSprawl
     {
 
         List<BitArray> rows;
@@ -200,7 +326,7 @@ namespace DATA
             {
                 int _ROW_INDEX = ((currentRow + totalRows) - i) % totalRows;
                 BitArray _ROW_CELLS = rows[_ROW_INDEX];
-                GL_DRAW.Draw_RECT_CELLS(_x, _y + (i * _ROW_HEIGHT) + (i * _GUTTER), _w, _ROW_HEIGHT, _ROW_CELLS, Color.white, 1);
+                GL_DRAW.Draw_RECT_CELLS(_x, _y + (i * _ROW_HEIGHT) + (i * _GUTTER), _w, _ROW_HEIGHT, _ROW_CELLS, _col, 1);
             }
         }
     }

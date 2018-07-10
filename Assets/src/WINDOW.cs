@@ -15,7 +15,7 @@ public class WINDOW
 
     public WINDOW(float _x = 0, float _y = 0, float _w = 1, float _h = 1, float _padX = DEFAULT_CONTENT_PADDING_X, float _padY = DEFAULT_CONTENT_PADDING_Y)
     {
-        pad_X = pad_X = _padX;
+        pad_X = _padX;
         pad_Y = _padY;
         transform = new GL_DRAW.GL_MATTRIX_TRANSFORM();
         Set_X(_x);

@@ -4,6 +4,8 @@ using UnityEngine;
 using COLOUR;
 using DATA;
 
+#region SCREEN 1 - Welcome
+
 public class SCREEN_1_WELCOME : SCREEN
 {
     public SCREEN_1_WELCOME()
@@ -33,7 +35,6 @@ public class SCREEN_1_WELCOME : SCREEN
         float _YDIV = 0.4f / _CELLS_Y;
         float _CELL_SIZE = _XDIV * 0.75f;
         float _CS2 = _CELL_SIZE * 0.5f;
-        float _CS4 = _CELL_SIZE * 0.25f;
 
         int _COUNT = 0;
         for (int x = 0; x < _CELLS_X; x++)
@@ -73,7 +74,8 @@ public class SCREEN_1_WELCOME : SCREEN
         }
     }
 }
-
+#endregion
+#region SCREEN 2 - Drawing + Anim
 public class SCREEN_2_DRAWING : SCREEN
 {
     public SCREEN_2_DRAWING()
@@ -97,7 +99,6 @@ public class SCREEN_2_DRAWING : SCREEN
         int _COUNT = 20;
         float _MIN = 0.02f;
         float _MAX = 0.05f;
-        float _DIV_SIZE = (_MAX - _MIN) / _COUNT;
         float _OFFSET = -0.2f;
         for (int i = 0; i < _COUNT; i++)
         {
@@ -107,6 +108,8 @@ public class SCREEN_2_DRAWING : SCREEN
         TXT("Use the \"anim\" class for simple animations", 0.2f, 0.75f, P.Get(4));
     }
 }
+#endregion
+#region SCREEN 3 - GRIDS
 public class SCREEN_3_GRIDS : SCREEN
 {
     public SCREEN_3_GRIDS()
@@ -115,12 +118,12 @@ public class SCREEN_3_GRIDS : SCREEN
         title = "grids";
         P = COL.Get_Palette(0);
     }
-
+    
     public override void BG()
     {
         GL_DRAW.Draw_BG_Y(P.Get(0), P.Get(1));
     }
-
+    
     public override void Draw()
     {
         base.Draw();
@@ -159,7 +162,8 @@ public class SCREEN_3_GRIDS : SCREEN
         }
     }
 }
-
+#region SCREEN 4 - Graphs
+#endregion
 public class SCREEN_4_GRAPHS : SCREEN
 {
     Graph _arcGraph1, _arcGraph2;
@@ -206,17 +210,21 @@ public class SCREEN_4_GRAPHS : SCREEN
         TXT("use methods in \"Values\" to create graphs", 0.1f, 0.9f, P.Get(4));
     }
 }
-
+#endregion
+#region SCREEN 5 - More fun
 public class SCREEN_5_MORE_FUN : SCREEN
 {
     List<DataSprawl> sprawls;
-    DataSprawl _sp;
-    int _sprawlCount = 5;
+    List<Partitions> partitionList;
+    int totalSprawls = 10;
+    int partitionListCount = 10;
     public SCREEN_5_MORE_FUN()
     {
         duration = 15f;
         title = "more fun stuff";
         P = COL.Get_Palette(1);
+
+        // data sprawls
         sprawls = new List<DataSprawl>();
         int _minRows = 5;
         int _maxRows = 20;
@@ -227,32 +235,68 @@ public class SCREEN_5_MORE_FUN : SCREEN
         int _minCellRate = 4;
         int _maxCellRate = 10;
 
-        _sp = new DataSprawl(10, 20, 2, 5);
 
-        for (int i = 0; i < _sprawlCount; i++)
+        for (int i = 0; i < totalSprawls; i++)
         {
             sprawls.Add(new DataSprawl(
-                10,
-                20,
-                2,
-                5
+                Random.Range(_minRows, _maxRows),
+                Random.Range(_minRowLength, _maxRowLength),
+                Random.Range(_minTickRate, _maxTickRate),
+                Random.Range(_minCellRate, _maxCellRate)
             ));
         }
-    }
 
+        // partitions
+        float gutterRatio = 1;
+        partitionList = new List<Partitions>();
+        for (int i = 0; i < partitionListCount; i++)
+        {
+            partitionList.Add(new Partitions(Random.Range(3, 10), 0.7f));
+        }
+
+    }
+    void DrawSprawl(int _index, float _x, float _y, float _w, float _h, Color _col){
+        DataSprawl _sp = sprawls[_index];
+        _sp.Update();
+        _sp.Draw(_x, _y, _w, _h, _col);
+
+    }
     public override void BG()
     {
-        GL_DRAW.Draw_BG_Y(P.Get(0), P.Get(1));
+        GL_DRAW.Draw_BG_Y(P.Get(0), P.Lerp(2, 3, Anim.Sin_Time(5f)));
     }
 
     public override void Draw()
     {
         base.Draw();
-        for (int i = 0; i < _sprawlCount; i++)
+
+        // sprawls
+        TXT("data sprawls :)", 0.1f, 0.9f, P.Get(4));
+        float _DIVX = 0.8f / totalSprawls;
+        for (int i = 0; i < totalSprawls; i++)
         {
-            DataSprawl _S = sprawls[i];
-            _S.Update();
-            _S.Draw(0, 0, 1, 1, P.Get(4));
+            DataSprawl _sp = sprawls[i];
+            _sp.Update();
+            _sp.Draw(0.1f + (_DIVX * i), 0.7f, _DIVX, 0.1f, P.Get(i % P.totalColours));
+        }
+
+
+        // partitions
+        TXT("partitions D:", 0.1f, 0.6f, P.Get(4));
+        float _DIV_P = 0.2f / partitionListCount;
+        float _DIV_RAD = 0.2f / partitionListCount;
+        float _DIV_ANGLE = 0.5f / partitionListCount;
+        for (int i = 0; i < partitionListCount; i++)
+        {
+            Partitions _P = partitionList[i];
+            _P.AddRandom(0.001f, 1f, 1.2f, i, 1.5f * i, 0.01f * i, 0.05f * i);
+            _P.ColourByShare(Color.red, Color.white);
+            HUD.Draw_BAR_PARTITIONS_FILL_X(0.5f, 0.4f-(i*_DIV_P), 0.4f, _DIV_P, partitionList[i]);
+            GL.PushMatrix();
+            GL_DRAW.Rotate(Anim.Runtime(i * 0.005f));
+            HUD.Draw_ARC_PARTITIONS_FILL(partitionList[i], 20, 0.2f, 0.3f, 0.01f + (i * _DIV_RAD), _DIV_RAD, 0f, Anim.Sin_Time(1,0.25f, _DIV_ANGLE*i, i));
+            GL.PopMatrix();
         }
     }
 }
+#endregion

@@ -716,7 +716,6 @@ public class GL_DRAW
     {
         float _DIV_X = _w / _divsX;
         float _DIV_Y = _h / _divsY;
-        Vector2 _VEC_ORIGIN = new Vector2(_originX, _originY);
         for (int x = 0; x <= _divsX; x++)
         {
             float _CUR_X = _x + (x * _DIV_X);
@@ -754,8 +753,6 @@ public class GL_DRAW
     {
         float _DIV_X = _w / _divsX;
         float _DIV_Y = _h / _divsY;
-        float _DIV_X_PT = _DIV_X * 1.5f;
-        float _DIV_Y_PT = _DIV_Y * 1.5f; ;
 
         for (int x = 0; x <= _divsX; x++)
         {

@@ -123,9 +123,12 @@ public class PRESENTATION
     }
     public void Draw()
     {
+        GL_DRAW.RESET_SKEW();
         currentScreen.Draw();
         Palette _P = currentScreen.P;
         Color _COL = _P.Get(4);
+
+        GL_DRAW.RESET_SKEW();
         // screen name
         GL_TXT.Txt(currentScreen.title, SCREEN_TITLE_X, SCREEN_TITLE_Y, DEFAULT_TXT_CELL_HEIGHT, _COL);
         string _PAGE_STR = (currentScreen_index + 1) + "/" + totalScreens;
