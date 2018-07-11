@@ -56,7 +56,12 @@ public class PRESENTATION
     }
     public void GotoPreviousScreen()
     {
-        GotoScreen((currentScreen_index - 1) % totalScreens);
+        int _prev = (currentScreen_index - 1) % totalScreens;
+        if (_prev < 0)
+        {
+            _prev = totalScreens - 1;
+        }
+        GotoScreen(_prev);
     }
     public void Update()
     {

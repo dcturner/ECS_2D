@@ -12,7 +12,8 @@ public class UI_Core : MonoBehaviour
     private void Awake()
     {
         PRESENTATION.INIT(palette.ToArray(), GL_MAT);
-        PREZ = new PRESENTATION(new SCREEN_1_WELCOME(), new SCREEN_2_DRAWING(), new SCREEN_3_GRIDS(), new SCREEN_4_GRAPHS(), new SCREEN_5_MORE_FUN());
+        //PREZ = new PRESENTATION(new SCREEN_1_WELCOME(), new SCREEN_2_DRAWING(), new SCREEN_3_GRIDS(), new SCREEN_4_GRAPHS(), new SCREEN_5_MORE_FUN(), new SCREEN_EXAMPLE1());
+        PREZ = new PRESENTATION(new SCREEN_EXAMPLE1());
     }
     private void OnPostRender()
     {
