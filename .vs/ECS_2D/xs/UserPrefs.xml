@@ -1,16 +1,10 @@
 ﻿<Properties StartupConfiguration="{2F109B89-5344-86F7-022D-F784E8CE26C4}|">
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/src/Anim.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/src/UI_Core.cs">
     <Files>
-      <File FileName="Assets/src/presentation/ECS_PREZ_SCREENS.cs" Line="200" Column="27" />
-      <File FileName="Assets/src/presentation/PRESENTATION.cs" Line="137" Column="83" />
-      <File FileName="Assets/src/UI_Core.cs" Line="12" Column="124" />
-      <File FileName="Assets/src/presentation/SCREEN.cs" Line="10" Column="42" />
-      <File FileName="Assets/src/COLOUR.cs" Line="30" Column="10" />
-      <File FileName="Assets/src/GL_DRAW.cs" Line="220" Column="42" />
-      <File FileName="Assets/src/HUD.cs" Line="277" Column="46" />
-      <File FileName="Assets/src/DATA.cs" Line="78" Column="39" />
-      <File FileName="Assets/src/Anim.cs" Line="29" Column="68" />
+      <File FileName="Assets/src/UI_Core.cs" Line="12" Column="39" />
+      <File FileName="Assets/src/COLOUR.cs" Line="55" Column="49" />
+      <File FileName="Assets/src/presentation/PRESENTATION.cs" Line="34" Column="21" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

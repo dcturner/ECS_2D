@@ -8,7 +8,7 @@ public class PRESENTATION
     public const float SCREEN_TITLE_X = 0.01f;
     public const float SCREEN_TITLE_Y = 0.98f;
     public const float DEFAULT_TXT_CELL_HEIGHT = 0.0025f;
-
+    public static Material mat;
     public static float MX, MY, MX_EASED, MY_EASED = 0f;
     public float M_EASE = 20f;
 
@@ -27,11 +27,14 @@ public class PRESENTATION
 
         GotoScreen(0);
     }
-    public static void INIT()
+    public static void INIT(Color[] _palette, Material _mat)
     {
+        // init material
+        mat = _mat;
+
         GL_FONT_3x5.Init();
         GL_MATRIX_ANIMS.Init();
-        COL.INIT_PALETTES();
+        COL.INIT_PALETTES(_palette);
     }
     public void AddScreen(SCREEN _screen)
     {
@@ -64,6 +67,7 @@ public class PRESENTATION
         MY_EASED += (MY - MY_EASED) / M_EASE;
         currentScreen.SetMouse(MX, MY, MX_EASED, MY_EASED);
         GL.LoadOrtho();
+        mat.SetPass(0);
 
         screenTimer -= Time.deltaTime;
         if (screenTimer < 0)

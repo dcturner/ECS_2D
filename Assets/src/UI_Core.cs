@@ -5,12 +5,14 @@ using DATA;
 using COLOUR;
 public class UI_Core : MonoBehaviour
 {
+    public Material GL_MAT;
+    public List<Color> palette;
     PRESENTATION PREZ;
+
     private void Awake()
     {
-        PRESENTATION.INIT();
-        PREZ = new PRESENTATION(new SCREEN_1_WELCOME(), new SCREEN_2_DRAWING(), new SCREEN_3_GRIDS(), new SCREEN_4_GRAPHS(), new SCREEN_5_MORE_FUN(), new SCREEN_EXAMPLE1());
-        //PREZ = new PRESENTATION(new SCREEN_EXAMPLE1());
+        PRESENTATION.INIT(palette.ToArray(), GL_MAT);
+        PREZ = new PRESENTATION(new SCREEN_1_WELCOME(), new SCREEN_2_DRAWING(), new SCREEN_3_GRIDS(), new SCREEN_4_GRAPHS(), new SCREEN_5_MORE_FUN());
     }
     private void OnPostRender()
     {

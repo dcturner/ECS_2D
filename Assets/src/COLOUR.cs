@@ -52,25 +52,10 @@ namespace COLOUR
     public class COL
     {
         public static List<Palette> palettes;
-        public static void INIT_PALETTES()
+        public static void INIT_PALETTES(Color[] _palette)
         {
             palettes = new List<Palette>();
-            palettes.Add(new Palette(
-                new Color(0.145f, 0.145f, 0.145f),
-                new Color(.2196f, .2039f, .2313f),
-                new Color(0.6039f, 0.7921f, 0.9176f),
-                new Color(0.8f, 0.5411f, 0.3803f),
-                new Color(0.8470f, 0.9333f, 0.9727f)
-
-            ));
-            palettes.Add(new Palette(
-                new Color(0.1294f, 0.1215f, 0.1254f),
-                new Color(0.6470f, 0.2901f, 0.2941f),
-                new Color(0.8039f, 0.5686f, 0.2431f),
-                new Color(0.8431f, 0.6823f, 0.2784f),
-                new Color(0.7647f, 0.8196f, 0.8509f)
-            ));
-
+            palettes.Add(new Palette(_palette));
         }
         public static Color HSV(float _hue, float _saturation, float _value, float _alpha = 1)
         {
@@ -80,7 +65,6 @@ namespace COLOUR
         }
         public static Color Set_alphaStrength(Color _col, float _strength)
         {
-
             return new Color(_col.r, _col.g, _col.b, _col.a * _strength);
         }
         public static Palette Get_Palette(int _index)
